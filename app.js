@@ -3,14 +3,14 @@ const bodyParser = require("body-parser");
 //const dataRoutes = require("./routes/data");
 const db = require('./util/database');
 
-db.execute('SELECT * FROM products')
-  .then(result => {
-    console.log(result);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
+//db.execute('SELECT * FROM products')
+//  .then(result => {
+//    console.log(result);
+//  })
+//  .catch(err => {
+//    console.log(err);
+//  });
+//
 const app = express();
 
 app.use(bodyParser.json()); // parse incoming JSON data
