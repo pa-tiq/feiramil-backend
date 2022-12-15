@@ -2,13 +2,14 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../keys.json');
+const error_messages = require('../util/error_messages.json');
 
 const User = require('../models/user');
 
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error('Validação falhou');
+    const error = new Error(error_messages.validation_failed);
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -44,7 +45,7 @@ exports.login = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        const error = new Error('Um usuário com esse e-mail não foi encontrado');
+        const error = new Error(error_messages.user_not_found);
         error.statusCode = 401;
         throw error;
       }
@@ -53,7 +54,7 @@ exports.login = (req, res, next) => {
     })
     .then((isEqual) => {
       if (!isEqual) {
-        const error = new Error('Senha errada');
+        const error = new Error(error_messages.wrong_password);
         error.statusCode = 401;
         throw error;
       }

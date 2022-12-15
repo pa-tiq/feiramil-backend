@@ -1,0 +1,9 @@
+{
+  "validation_failed":"Validação falhou, dados inseridos estão incorretos.",
+  "no_image_found":"O produto precisa ter imagens!",
+  "product_not_found":"Produto não encontrado.",
+  "not_authorized":"Não autorizado.",
+  "not_authenticated":"Não autenticado.",
+  "user_not_found":"Um usuário com esse e-mail não foi encontrado.",
+  "wrong_password":"Senha errada."
+}

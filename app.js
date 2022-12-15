@@ -1,15 +1,3 @@
-
-const db = require('./util/database');
-
-//db.execute('SELECT * FROM products')
-//  .then(result => {
-//    console.log(result);
-//  })
-//  .catch(err => {
-//    console.log(err);
-//  });
-//
-
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -18,8 +6,10 @@ const { v4:uuidv4 } = require('uuid');
 
 const feedRoutes = require("./routes/feed_router");
 const authRoutes = require("./routes/auth_router");
+const db = require('./util/database');
 
 const app = express();
+
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, callback) => {

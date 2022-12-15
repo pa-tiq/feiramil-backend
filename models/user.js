@@ -31,4 +31,9 @@ module.exports = class User {
   static findEmail(email) {
     return db.execute('SELECT * FROM users WHERE users.email = ?', [email]);
   }
+
+  static findProducts(id) {
+    return db.execute('SELECT * FROM products WHERE products.userId = ?', [id]);
+  }
+
 };
