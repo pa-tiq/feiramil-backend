@@ -10,7 +10,6 @@ const db = require('./util/database');
 
 const app = express();
 
-
 const fileStorage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, "images");
@@ -57,10 +56,12 @@ app.use("/auth", authRoutes); // GET /auth/
 
 app.use((error, req, res, next) => {
   // executed whenever an error is thrown with throw() or forwarded with next()
-  console.log(error);
+  console.log('Erro capturado:',error);
   const status = error.statusCode || 500; // if error.statusCode is undefined, then status = 500
   const message = error.message;
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
+
+app.listen(8080);
 

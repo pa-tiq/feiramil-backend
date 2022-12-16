@@ -14,8 +14,8 @@ router.put(
       .isEmail()
       .withMessage('Por favor, use um e-mail válido.')
       .custom((value, { req }) => {
-        return User.findEmail(value).then((userDoc) => {
-          if (userDoc) {
+        return User.findByEmail(value).then(([rows]) => {
+          if (rows.length > 0) {
             return Promise.reject('Esse e-mail já está cadastrado.');
           }
         });

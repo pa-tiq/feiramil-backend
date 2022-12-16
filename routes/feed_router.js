@@ -17,7 +17,7 @@ router.post(
     body('title').trim().isLength({ min: 5 }),
     body('content').trim().isLength({ min: 5 }),
   ],
-  feedController.createPost
+  feedController.createProduct
 ); // POST /feed/post
 
 router.put(
@@ -27,7 +27,7 @@ router.put(
     body('title').trim().isLength({ min: 5 }),
     body('content').trim().isLength({ min: 5 }),
   ],
-  feedController.updatePost
+  feedController.updateProduct
 );
 
 router.delete('/post/:postId', isAuth, feedController.deletePost);

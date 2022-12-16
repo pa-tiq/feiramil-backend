@@ -42,15 +42,15 @@ exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
+  User.findByEmail(email)
+    .then(([users]) => {
+      if (users.length === 0) {
         const error = new Error(error_messages.user_not_found);
         error.statusCode = 401;
         throw error;
       }
-      loadedUser = user;
-      return bcrypt.compare(password, user.password);
+      loadedUser = users[0];
+      return bcrypt.compare(password, loadedUser.password);
     })
     .then((isEqual) => {
       if (!isEqual) {
