@@ -6,6 +6,7 @@ const { v4:uuidv4 } = require('uuid');
 
 const feedRoutes = require("./routes/feed_router");
 const authRoutes = require("./routes/auth_router");
+const userRoutes = require("./routes/user_router");
 const db = require('./util/database');
 
 const app = express();
@@ -52,6 +53,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/feed", feedRoutes); // GET /feed/
+app.use("/user", userRoutes); // GET /user/
 app.use("/auth", authRoutes); // GET /auth/
 
 app.use((error, req, res, next) => {
