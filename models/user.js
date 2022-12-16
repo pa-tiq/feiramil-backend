@@ -5,13 +5,13 @@ module.exports = class User {
     this.id = id;
     this.email = email;
     this.password = password;
-    this.name = name;
-    this.om = om;
+    this.name = name ? name : null;
+    this.om = om ? om : null;
   }
 
   save() {
     return db.execute(
-      'INSERT INTO users (email, password, name, imageUrl) om (?, ?, ?, ?)',
+      'INSERT INTO users (email, password, name, om) VALUES (?, ?, ?, ?)',
       [this.email, this.password, this.name, this.om]
     );
   }
@@ -32,7 +32,7 @@ module.exports = class User {
     return db.execute('SELECT * FROM users WHERE users.email = ?', [email]);
   }
 
-  static findProducts(id) {
+  static findProductsByUserId(id) {
     return db.execute('SELECT * FROM products WHERE products.userId = ?', [id]);
   }
 

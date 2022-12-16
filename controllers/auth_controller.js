@@ -15,20 +15,17 @@ exports.signup = (req, res, next) => {
     throw error;
   }
   const email = req.body.email;
-  const name = req.body.name;
+  const name = 'oie';
+  const om = 'oieee';
   const password = req.body.password;
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
-      const user = new User({
-        email: email,
-        password: hashedPassword,
-        name: name,
-      });
+      const user = new User(null, email, hashedPassword, name, om);
       return user.save();
     })
     .then((result) => {
-      res.status(201).json({ message: 'Usuário criado', userId: result._id });
+      res.status(201).json({ message: 'Usuário criado', userId: result[0].insertId });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -63,7 +60,7 @@ exports.login = (req, res, next) => {
           email: loadedUser.email,
           userId: loadedUser.id.toString(),
         },
-        keys.jsonwebtoken_secret,
+        keys.jsonwebtoken_secret
         //{ expiresIn: '1h' }
       );
       res.status(200).json({

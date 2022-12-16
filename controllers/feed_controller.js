@@ -10,9 +10,7 @@ const error_messages = require('../util/error_messages.json');
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()
     .then(([products]) => {
-      res
-        .status(200)
-        .json({ message: 'Produtos obtidos', products: products }); // 200 = success
+      res.status(200).json({ message: 'Produtos obtidos', products: products }); // 200 = success
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -60,13 +58,7 @@ exports.createProduct = (req, res, next) => {
   const description = req.body.description;
   const userId = req.userId;
 
-  const product = new Product({
-    title: title,
-    price: price,
-    description: description,
-    imageUri: imageUri,
-    userId: userId,
-  });
+  const product = new Product(title, price, description, userId);
   product
     .save()
     .then((result) => {
