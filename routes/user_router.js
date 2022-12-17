@@ -22,4 +22,13 @@ router.put(
   userController.updateUser
 );
 
+router.put(
+  '/photo',
+  isAuth,
+  [
+    body('photo').trim().isLength({ min: 6 }),
+  ],
+  userController.updatePhoto
+);
+
 module.exports = router;

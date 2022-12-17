@@ -8,12 +8,13 @@ module.exports = class User {
     this.name = name ? name : null;
     this.om = om ? om : null;
     this.phone = phone ? phone : null;
+    this.photo = photo ? photo : null;
   }
 
   save() {
     return db.execute(
-      'INSERT INTO users (email, password, name, om, phone) VALUES (?, ?, ?, ?, ?)',
-      [this.email, this.password, this.name, this.om, this.phone]
+      'INSERT INTO users (email, password, name, om, phone, photo) VALUES (?, ?, ?, ?, ?, ?)',
+      [this.email, this.password, this.name, this.om, this.phone, this.photo]
     );
   }  
   update() {
@@ -28,6 +29,12 @@ module.exports = class User {
         [this.email, this.password, this.name, this.om, this.phone, this.id]
       );
     }
+  }
+  updatePhoto() {
+    return db.execute(
+      'UPDATE users SET photo = ? WHERE id = ?',
+      [this.photo, this.id]
+    );
   }
 
   static deleteById(id) {

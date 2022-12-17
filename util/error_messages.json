@@ -1,6 +1,7 @@
 {
   "validation_failed":"Validação falhou, dados inseridos estão incorretos.",
   "no_image_found":"O produto precisa ter imagens!",
+  "no_image_provided":"Nenhuma imagem foi enviada.",
   "product_not_found":"Produto não encontrado.",
   "not_authorized":"Não autorizado.",
   "not_authenticated":"Não autenticado.",

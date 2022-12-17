@@ -30,6 +30,12 @@ exports.getUser = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {};
 
 exports.updateUser = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error(error_messages.validation_failed);
+    error.statusCode = 422;
+    throw error;
+  }
   const userId = req.userId;
   const email = req.body.email;
   const name = req.body.name;
@@ -41,12 +47,10 @@ exports.updateUser = (req, res, next) => {
     user
       .update()
       .then((result) => {
-        res
-          .status(201)
-          .json({
-            message: 'Usuário editado',
-            changedRows: result[0].changedRows,
-          });
+        res.status(201).json({
+          message: 'Usuário editado',
+          changedRows: result[0].changedRows,
+        });
       })
       .catch((error) => {
         if (!error.statusCode) {
@@ -74,4 +78,31 @@ exports.updateUser = (req, res, next) => {
         next(error);
       });
   }
+};
+
+exports.updatePhoto = (req, res, next) => {
+  if (!req.file) {
+    const error = new Error(error_messages.no_image_provided);
+    error.statusCode = 422;
+    throw error;
+  }
+  console.log('file', req.file);
+  console.log('body', req.body._parts);
+  const userId = req.userId;
+  const newPhoto = req.body.photo;
+  const user = new User(userId, null, null, null, null, null, newPhoto);
+  user
+    .updatePhoto()
+    .then((result) => {
+      res.status(201).json({
+        message: 'Foto do usuário editada',
+        changedRows: result[0].changedRows,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
 };
