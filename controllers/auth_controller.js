@@ -15,13 +15,13 @@ exports.signup = (req, res, next) => {
     throw error;
   }
   const email = req.body.email;
-  const name = 'oie';
-  const om = 'oieee';
+  const name = 'nome';
+  const om = 'om';
   const password = req.body.password;
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
-      const user = new User(null, email, hashedPassword, name, om);
+      const user = new User(null, email, hashedPassword, null, null, null);
       return user.save();
     })
     .then((result) => {

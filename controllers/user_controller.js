@@ -29,4 +29,49 @@ exports.getUser = (req, res, next) => {
 
 exports.deleteUser = (req, res, next) => {};
 
-exports.updateUser = (req, res, next) => {};
+exports.updateUser = (req, res, next) => {
+  const userId = req.userId;
+  const email = req.body.email;
+  const name = req.body.name;
+  const om = req.body.om;
+  const phone = req.body.phone;
+  const newPassword = req.body.password;
+  if (!newPassword) {
+    const user = new User(userId, email, null, name, om, phone);
+    user
+      .update()
+      .then((result) => {
+        res
+          .status(201)
+          .json({
+            message: 'Usuário editado',
+            changedRows: result[0].changedRows,
+          });
+      })
+      .catch((error) => {
+        if (!error.statusCode) {
+          error.statusCode = 500;
+        }
+        next(error);
+      });
+  } else {
+    bcrypt
+      .hash(newPassword, 12)
+      .then((hashedPassword) => {
+        const user = new User(userId, email, hashedPassword, name, om, phone);
+        return user.update();
+      })
+      .then((result) => {
+        res.status(201).json({
+          message: 'Usuário editado',
+          changedRows: result[0].changedRows,
+        });
+      })
+      .catch((error) => {
+        if (!error.statusCode) {
+          error.statusCode = 500;
+        }
+        next(error);
+      });
+  }
+};

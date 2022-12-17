@@ -11,13 +11,13 @@ router.get('/user', isAuth, userController.getUser); // GET /user/user
 router.delete('/user/:userId', isAuth, userController.deleteUser);
 
 router.put(
-  '/user/:userId',
+  '/user',
   isAuth,
   [
-    body('email').trim().isLength({ min: 1 }),
-    body('password').trim().isLength({ min: 1 }),
-    body('name').trim().isLength({ min: 1 }),
-    body('om').trim().isLength({ min: 1 }),
+    body('email').trim().isLength({ min: 6 }),
+    body('name').trim().isLength({ min: 0 }),
+    body('om').trim().isLength({ min: 0 }),
+    body('phone').trim().isLength({ min: 0 }),
   ],
   userController.updateUser
 );
