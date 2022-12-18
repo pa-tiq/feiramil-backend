@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get('/products', isAuth, feedController.getProducts); // GET /feed/products
 
+router.get('/products/:userId', isAuth, feedController.getUserProducts); // GET /feed/products
+
 router.get('/product/:productId', isAuth, feedController.getProduct);
 
 router.post(

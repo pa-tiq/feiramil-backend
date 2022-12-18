@@ -33,6 +33,10 @@ module.exports = class Product {
   }
 
   static findByUserId(userId) {
-    return db.execute('SELECT * FROM products WHERE products.userId = ?', [userId]);
+    return db.execute(
+      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', U.om as 'userOm', U.phone as 'userPhone' FROM feiramil.products P 
+      INNER JOIN feiramil.users U ON P.userId = U.id  
+      WHERE P.userId = ?;
+      `, [userId]);
   }
 };

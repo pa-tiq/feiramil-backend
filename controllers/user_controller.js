@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
 const error_messages = require('../util/error_messages.json');
+const success_messages = require('../util/success.messages.json');
 
 const Product = require('../models/product');
 const User = require('../models/user');
@@ -17,7 +18,7 @@ exports.getUser = (req, res, next) => {
         throw error;
       }
       loadedUser = users[0];
-      res.status(200).json({ message: 'User fetched', user: loadedUser });
+      res.status(200).json({ message: success_messages.user_fetched, user: loadedUser });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -67,7 +68,7 @@ exports.updateUser = (req, res, next) => {
       })
       .then((result) => {
         res.status(201).json({
-          message: 'Usuário editado',
+          message: success_messages.user_edited,
           changedRows: result[0].changedRows,
         });
       })
@@ -91,7 +92,7 @@ exports.updatePhotoPath = (req, res, next) => {
     .updatePhoto()
     .then((result) => {
       res.status(201).json({
-        message: 'Caminho para a foto do usuário editado',
+        message: success_messages.user_profile_picture_path_edited,
         changedRows: result[0].changedRows,
       });
     })
@@ -109,7 +110,7 @@ exports.uploadPhoto = (req, res) => {
       fs.createWriteStream('./profilePictures/image' + Date.now() + '.png')
     );
     res.status(201).json({
-      message: 'Foto do usuário editada',
+      message: success_messages.user_profile_picture_edited,
       path: result.path,
     });
   } catch (error) {

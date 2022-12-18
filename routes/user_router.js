@@ -11,17 +11,14 @@ router.get('/user', isAuth, userController.getUser); // GET /user/user
 
 router.delete('/user/:userId', isAuth, userController.deleteUser);
 
-//router.put(
-//  '/user',
-//  isAuth,
-//  [
-//    body('email').trim().isLength({ min: 6 }),
-//    body('name').trim().isLength({ min: 0 }),
-//    body('om').trim().isLength({ min: 0 }),
-//    body('phone').trim().isLength({ min: 0 }),
-//  ],
-//  userController.updateUser
-//);
+router.put(
+  '/user',
+  isAuth,
+  [
+    body('email').trim().isLength({ min: 6 }),
+  ],
+  userController.updateUser
+);
 
 router.put(
   '/image',

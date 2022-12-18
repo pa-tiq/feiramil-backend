@@ -20,6 +20,19 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
+exports.getUserProducts = (req, res, next) => {
+  Product.findByUserId(req.userId)
+    .then(([products]) => {
+      res.status(200).json({ message: `Produtos do usuário ${req.userId} obtidos`, products: products }); // 200 = success
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
 exports.getProduct = (req, res, next) => {
   const productId = req.params.productId;
   Product.findById(productId)
@@ -46,8 +59,6 @@ exports.createProduct = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  console.log(req.userId);
-
   const title = req.body.title;
   const price = req.body.price;
   const description = req.body.description;
