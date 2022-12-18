@@ -1,7 +1,7 @@
 const db = require('../util/database');
 
 module.exports = class User {
-  constructor(id, email, password, name, om, phone) {
+  constructor(id, email, password, name, om, phone, photo) {
     this.id = id;
     this.email = email;
     this.password = password;

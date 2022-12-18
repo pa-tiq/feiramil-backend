@@ -5,30 +5,35 @@ const userController = require('../controllers/user_controller');
 const isAuth = require('../util/is-auth');
 
 const router = express.Router();
+const multer = require('multer');
 
 router.get('/user', isAuth, userController.getUser); // GET /user/user
 
 router.delete('/user/:userId', isAuth, userController.deleteUser);
 
-router.put(
-  '/user',
-  isAuth,
-  [
-    body('email').trim().isLength({ min: 6 }),
-    body('name').trim().isLength({ min: 0 }),
-    body('om').trim().isLength({ min: 0 }),
-    body('phone').trim().isLength({ min: 0 }),
-  ],
-  userController.updateUser
-);
+//router.put(
+//  '/user',
+//  isAuth,
+//  [
+//    body('email').trim().isLength({ min: 6 }),
+//    body('name').trim().isLength({ min: 0 }),
+//    body('om').trim().isLength({ min: 0 }),
+//    body('phone').trim().isLength({ min: 0 }),
+//  ],
+//  userController.updateUser
+//);
 
 router.put(
-  '/photo',
+  '/image',
   isAuth,
-  [
-    body('photo').trim().isLength({ min: 6 }),
-  ],
-  userController.updatePhoto
+  userController.updatePhotoPath
 );
+
+router.patch(
+  '/image',
+  isAuth,
+  userController.uploadPhoto
+);
+
 
 module.exports = router;

@@ -80,22 +80,19 @@ exports.updateUser = (req, res, next) => {
   }
 };
 
-exports.updatePhoto = (req, res, next) => {
-  if (!req.file) {
-    const error = new Error(error_messages.no_image_provided);
-    error.statusCode = 422;
-    throw error;
-  }
-  console.log('file', req.file);
-  console.log('body', req.body._parts);
+exports.updatePhotoPath = (req, res, next) => {
+  //if (!req.file) {
+  //  const error = new Error(error_messages.no_image_provided);
+  //  error.statusCode = 422;
+  //  throw error;
+  //}
   const userId = req.userId;
-  const newPhoto = req.body.photo;
-  const user = new User(userId, null, null, null, null, null, newPhoto);
+  const user = new User(userId, null, null, null, null, null, req.body.path);
   user
     .updatePhoto()
     .then((result) => {
       res.status(201).json({
-        message: 'Foto do usuário editada',
+        message: 'Caminho para a foto do usuário editado',
         changedRows: result[0].changedRows,
       });
     })
@@ -105,4 +102,19 @@ exports.updatePhoto = (req, res, next) => {
       }
       next(error);
     });
+};
+
+exports.uploadPhoto = (req, res) => {
+  try{
+    const result = req.pipe(fs.createWriteStream('./profilePictures/image' + Date.now() + '.png'));
+    res.status(201).json({
+      message: 'Foto do usuário editada',
+      path: result.path,
+    });
+  } catch(error){
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    throw error;
+  }
 };
