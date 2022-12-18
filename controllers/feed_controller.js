@@ -46,26 +46,21 @@ exports.createProduct = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  if (!req.file) {
-    const error = new Error(error_messages.no_image_found);
-    error.statusCode = 422;
-    throw error;
-  }
-  //const imageUrl = req.file.path; //doesn't work in windows
-  const imageUri = req.file.path.replace('\\', '/');
+  console.log(req.userId);
+
   const title = req.body.title;
   const price = req.body.price;
   const description = req.body.description;
   const userId = req.userId;
 
-  const product = new Product(title, price, description, userId);
+  const product = new Product(null,title, price, description, userId);
   product
     .save()
     .then((result) => {
       // 201 = success, a resource was created
       res.status(201).json({
         message: 'Post created successfully',
-        product: product,
+        result: result,
       });
     })
     .catch((error) => {
@@ -74,7 +69,6 @@ exports.createProduct = (req, res, next) => {
       }
       next(error);
     });
-  console.log(title, content);
 };
 
 exports.updateProduct = (req, res, next) => {
@@ -129,7 +123,7 @@ exports.updateProduct = (req, res, next) => {
     });
 };
 
-exports.deletePost = (req, res, next) => {
+exports.deleteProduct = (req, res, next) => {
   const postId = req.params.postId;
   Post.findById(postId)
     .then((post) => {

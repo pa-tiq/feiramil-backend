@@ -12,6 +12,7 @@ const userRoutes = require('./routes/user_router');
 const app = express();
 
 const profilePictures = multer({ dest: 'profilePictures/' });
+const productPictures = multer({ dest: 'productPictures/' });
 
 // This method will save the binary content of the request as a file.
 //app.patch('/binary-upload', (req, res) => {

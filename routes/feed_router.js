@@ -11,17 +11,17 @@ router.get('/products', isAuth, feedController.getProducts); // GET /feed/produc
 router.get('/product/:productId', isAuth, feedController.getProduct);
 
 router.post(
-  '/post',
+  '/product',
   isAuth,
   [
     body('title').trim().isLength({ min: 5 }),
-    body('content').trim().isLength({ min: 5 }),
+    body('description').trim().isLength({ min: 5 }),
   ],
   feedController.createProduct
 ); // POST /feed/post
 
 router.put(
-  '/post/:postId',
+  '/product/:productId',
   isAuth,
   [
     body('title').trim().isLength({ min: 5 }),
@@ -30,6 +30,6 @@ router.put(
   feedController.updateProduct
 );
 
-router.delete('/post/:postId', isAuth, feedController.deletePost);
+router.delete('/product/:productId', isAuth, feedController.deleteProduct);
 
 module.exports = router;

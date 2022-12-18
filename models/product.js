@@ -11,7 +11,7 @@ module.exports = class Product {
 
   save() {
     return db.execute(
-      'INSERT INTO products (title, price, description, userId) VALUES (?, ?, ?, ?)'
+      'INSERT INTO products (title, price, description, userId) VALUES (?, ?, ?, ?)',
       [this.title, this.price, this.description, this.userId]
     );
   }

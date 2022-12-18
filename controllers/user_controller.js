@@ -81,11 +81,6 @@ exports.updateUser = (req, res, next) => {
 };
 
 exports.updatePhotoPath = (req, res, next) => {
-  //if (!req.file) {
-  //  const error = new Error(error_messages.no_image_provided);
-  //  error.statusCode = 422;
-  //  throw error;
-  //}
   const oldFileExists = fs.existsSync('.' + req.body.oldpath);
   if (oldFileExists) {
     fs.unlinkSync('.' + req.body.oldpath);
