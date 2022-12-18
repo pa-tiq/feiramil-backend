@@ -6,7 +6,7 @@ module.exports = class Product {
     this.title = title;
     this.price = price;
     this.description = description;
-    this.userId = userId
+    this.userId = userId;
   }
 
   save() {
@@ -24,19 +24,27 @@ module.exports = class Product {
     return db.execute('SELECT * FROM products');
     //.then(([rows]) => {})
     //.catch((err) => console.log(err));
-  } 
+  }
 
   static findById(id) {
-    return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
-    //.then(([products]) => { //the product is in products[0]  })
-    //.catch((err) => console.log(err));
+    return db.execute(
+      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', U.om as 'userOm', U.phone as 'userPhone', U.photo as 'userPhoto' 
+      FROM feiramil.products P 
+      INNER JOIN feiramil.users U ON P.userId = U.id  
+      WHERE P.id = ?;
+      `,
+      [id]
+    );
   }
 
   static findByUserId(userId) {
     return db.execute(
-      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', U.om as 'userOm', U.phone as 'userPhone' FROM feiramil.products P 
+      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', U.om as 'userOm', U.phone as 'userPhone' 
+      FROM feiramil.products P 
       INNER JOIN feiramil.users U ON P.userId = U.id  
       WHERE P.userId = ?;
-      `, [userId]);
+      `,
+      [userId]
+    );
   }
 };

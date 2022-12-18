@@ -23,6 +23,11 @@ exports.getProducts = (req, res, next) => {
 exports.getUserProducts = (req, res, next) => {
   Product.findByUserId(req.userId)
     .then(([products]) => {
+      if (products.length === 0) {
+        const error = new Error(error_messages.product_not_found);
+        error.statusCode = 404;
+        throw error;
+      }
       res.status(200).json({ message: `Produtos do usuário ${req.userId} obtidos`, products: products }); // 200 = success
     })
     .catch((error) => {
@@ -36,13 +41,13 @@ exports.getUserProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
   const productId = req.params.productId;
   Product.findById(productId)
-    .then((post) => {
-      if (!post) {
+    .then(([products]) => {
+      if (products.length === 0) {
         const error = new Error(error_messages.product_not_found);
         error.statusCode = 404;
         throw error;
       }
-      res.status(200).json({ message: 'Produto encontrado', post: post });
+      res.status(200).json({ message: 'Produto encontrado', product: products[0] });
     })
     .catch((error) => {
       if (!error.statusCode) {
