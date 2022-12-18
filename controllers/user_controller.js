@@ -86,6 +86,10 @@ exports.updatePhotoPath = (req, res, next) => {
   //  error.statusCode = 422;
   //  throw error;
   //}
+  const oldFileExists = fs.existsSync('.' + req.body.oldpath);
+  if (oldFileExists) {
+    fs.unlinkSync('.' + req.body.oldpath);
+  }
   const userId = req.userId;
   const user = new User(userId, null, null, null, null, null, req.body.path);
   user
@@ -105,13 +109,15 @@ exports.updatePhotoPath = (req, res, next) => {
 };
 
 exports.uploadPhoto = (req, res) => {
-  try{
-    const result = req.pipe(fs.createWriteStream('./profilePictures/image' + Date.now() + '.png'));
+  try {
+    const result = req.pipe(
+      fs.createWriteStream('./profilePictures/image' + Date.now() + '.png')
+    );
     res.status(201).json({
       message: 'Foto do usuário editada',
       path: result.path,
     });
-  } catch(error){
+  } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
