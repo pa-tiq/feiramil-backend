@@ -24,11 +24,11 @@ exports.getProducts = (req, res, next) => {
 exports.getUserProducts = (req, res, next) => {
   Product.findByUserId(req.userId)
     .then(([products]) => {
-      if (products.length === 0) {
-        const error = new Error(error_messages.user_products_not_found);
-        error.statusCode = 404;
-        throw error;
-      }
+      //if (products.length === 0) {
+      //  const error = new Error(error_messages.user_products_not_found);
+      //  error.statusCode = 404;
+      //  throw error;
+      //}
       res.status(200).json({ message: `Produtos do usuário ${req.userId} obtidos`, products: products }); // 200 = success
     })
     .catch((error) => {
@@ -195,7 +195,6 @@ exports.deleteProduct = (req, res, next) => {
     })
     .then(([images]) => {
       if(images.length !== 0){
-        console.log(images);
         try {
           fs.unlinkSync('.' + images[0].image);
         } catch (error) {
