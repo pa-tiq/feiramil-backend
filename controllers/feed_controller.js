@@ -6,6 +6,7 @@ const Product = require('../models/product');
 const Image = require('../models/image');
 const User = require('../models/user');
 const error_messages = require('../util/error_messages.json');
+const success_messages = require('../util/success.messages.json');
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()
@@ -77,6 +78,43 @@ exports.createProduct = (req, res, next) => {
       res.status(201).json({
         message: 'Post created successfully',
         result: result,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.uploadProductImage = (req, res, next) => {
+  try {
+    const result = req.pipe(
+      fs.createWriteStream('./productPictures/image' + Date.now() + '.png')
+    );
+    res.status(201).json({
+      message: success_messages.user_profile_picture_edited,
+      path: result.path,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    throw error;
+  }
+};
+
+exports.addProductImagePath = (req, res, next) => {
+  const userId = req.userId;
+  const productId = req.params.productId;
+  const image = new Image(null, req.body.path, productId);
+  image
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: success_messages.product_image_path_added,
+        imageId: result[0].insertId
       });
     })
     .catch((error) => {

@@ -5,7 +5,6 @@ const userController = require('../controllers/user_controller');
 const isAuth = require('../util/is-auth');
 
 const router = express.Router();
-const multer = require('multer');
 
 router.get('/user', isAuth, userController.getUser); // GET /user/user
 

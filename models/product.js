@@ -28,9 +28,12 @@ module.exports = class Product {
 
   static findById(id) {
     return db.execute(
-      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', U.om as 'userOm', U.phone as 'userPhone', U.photo as 'userPhoto' 
+      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
+      U.om as 'userOm', U.phone as 'userPhone', U.photo as 'userPhoto', 
+      I.image as 'imagePath' 
       FROM feiramil.products P 
-      INNER JOIN feiramil.users U ON P.userId = U.id  
+      INNER JOIN feiramil.users U ON P.userId = U.id
+      LEFT JOIN feiramil.images I on I.productId = P.id  
       WHERE P.id = ?;
       `,
       [id]
@@ -39,9 +42,11 @@ module.exports = class Product {
 
   static findByUserId(userId) {
     return db.execute(
-      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', U.om as 'userOm', U.phone as 'userPhone' 
+      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
+      U.om as 'userOm', U.phone as 'userPhone', I.image as 'imagePath' 
       FROM feiramil.products P 
-      INNER JOIN feiramil.users U ON P.userId = U.id  
+      INNER JOIN feiramil.users U ON P.userId = U.id
+      LEFT JOIN feiramil.images I on I.productId = P.id  
       WHERE P.userId = ?;
       `,
       [userId]

@@ -60,6 +60,7 @@ app.use(
 ); //every incoming request will be parsed for files
 
 app.use('/profilePictures', express.static(path.join(__dirname, 'profilePictures')));
+app.use('/productPictures', express.static(path.join(__dirname, 'productPictures')));
 
 app.use((req, res, next) => {
   //middleware to solve CORS error

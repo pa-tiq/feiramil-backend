@@ -5,5 +5,7 @@
   "user_profile_picture_edited":"Foto de perfil do usuário editada.",
   "user_profile_picture_path_edited":"URL da foto de perfil do usuário editada.",
   "product_added":"Produto adicionado.",
+  "product_image_added":"Imagem do produto adicionada.",
+  "product_image_path_added":"URL da imagem do produto adicionada.",
   "product_edited":"Produto editado."
 }

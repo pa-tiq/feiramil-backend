@@ -22,6 +22,18 @@ router.post(
   feedController.createProduct
 ); // POST /feed/post
 
+router.patch(
+  '/image/',
+  isAuth,
+  feedController.uploadProductImage
+); // POST /feed/post
+
+router.post(
+  '/image/:productId',
+  isAuth,
+  feedController.addProductImagePath
+); // POST /feed/post
+
 router.put(
   '/product/:productId',
   isAuth,
