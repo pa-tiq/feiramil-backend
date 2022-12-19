@@ -3,6 +3,7 @@
   "no_image_found":"O produto precisa ter imagens!",
   "no_image_provided":"Nenhuma imagem foi enviada.",
   "product_not_found":"Produto não encontrado.",
+  "user_products_not_found":"Usuário não tem produtos cadastrados.",
   "not_authorized":"Não autorizado.",
   "not_authenticated":"Não autenticado.",
   "user_not_found":"Um usuário com esse e-mail não foi encontrado.",

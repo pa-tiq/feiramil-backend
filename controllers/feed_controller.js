@@ -25,7 +25,7 @@ exports.getUserProducts = (req, res, next) => {
   Product.findByUserId(req.userId)
     .then(([products]) => {
       if (products.length === 0) {
-        const error = new Error(error_messages.product_not_found);
+        const error = new Error(error_messages.user_products_not_found);
         error.statusCode = 404;
         throw error;
       }
@@ -178,32 +178,39 @@ exports.updateProduct = (req, res, next) => {
 };
 
 exports.deleteProduct = (req, res, next) => {
-  const postId = req.params.postId;
-  Post.findById(postId)
-    .then((post) => {
-      if (!post) {
+  const productId = req.params.productId;
+  Product.findById(productId)
+    .then(([products]) => {
+      if (products.length === 0) {
         const error = new Error(error_messages.product_not_found);
         error.statusCode = 404;
         throw error;
       }
-      if (post.creator.toString() !== req.userId) {
+      if (products[0].userId != req.userId) {
         const error = new Error(error_messages.not_authorized);
         error.statusCode = 403;
         throw error;
       }
-      // check logged in user
-      deleteImage(post.imageUrl);
-      return Post.findByIdAndRemove(postId);
+      return Image.findByProductId(productId);
     })
-    .then((result) => {
-      return User.findById(req.userId);
-    })
-    .then((user) => {
-      user.posts.pull(postId);
-      return user.save();
-    })
-    .then((result) => {
-      res.status(200).json({ message: 'Post deleted' });
+    .then(([images]) => {
+      if(images.length !== 0){
+        console.log(images);
+        try {
+          fs.unlinkSync('.' + images[0].image);
+        } catch (error) {
+          console.log(error);
+        } 
+      }      
+    })        
+    .then(() => {
+      return Image.deleteByProductId(productId);
+    })     
+    .then(() => {
+      return Product.deleteById(productId);
+    })    
+    .then(() => {
+      res.status(200).json({ message: success_messages.product_deleted });
     })
     .catch((error) => {
       if (!error.statusCode) {
