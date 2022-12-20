@@ -93,7 +93,7 @@ exports.createProduct = (req, res, next) => {
     });
 };
 
-exports.uploadProductImage = (req, res, next) => {
+exports.uploadProductImage = (req, res) => {
   try {
     const result = req.pipe(
       fs.createWriteStream('./productPictures/image' + Date.now() + '.png')

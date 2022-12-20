@@ -22,7 +22,7 @@ router.post(
   feedController.createProduct
 );
 
-router.patch('/image/', isAuth, feedController.uploadProductImage); // POST /feed/post
+router.patch('/image', isAuth, feedController.uploadProductImage); // POST /feed/post
 
 router.post('/image/:productId', isAuth, feedController.addProductImagePath); // POST /feed/post
 
