@@ -15,6 +15,12 @@ module.exports = class Product {
       [this.title, this.price, this.description, this.userId]
     );
   }
+  update() {
+    return db.execute(
+      'UPDATE products SET title = ?, price = ?, description = ? WHERE id = ?',
+      [this.title, this.price, this.description, this.id]
+    );
+  }
 
   static deleteById(id) {
     return db.execute('DELETE FROM products WHERE id = ?', [id]);

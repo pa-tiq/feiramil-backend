@@ -29,7 +29,10 @@ exports.getUserProducts = (req, res, next) => {
       //  error.statusCode = 404;
       //  throw error;
       //}
-      res.status(200).json({ message: `Produtos do usuário ${req.userId} obtidos`, products: products }); // 200 = success
+      res.status(200).json({
+        message: `Produtos do usuário ${req.userId} obtidos`,
+        products: products,
+      }); // 200 = success
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -48,7 +51,9 @@ exports.getProduct = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      res.status(200).json({ message: 'Produto encontrado', product: products[0] });
+      res
+        .status(200)
+        .json({ message: 'Produto encontrado', product: products[0] });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -70,7 +75,7 @@ exports.createProduct = (req, res, next) => {
   const description = req.body.description;
   const userId = req.userId;
 
-  const product = new Product(null,title, price, description, userId);
+  const product = new Product(null, title, price, description, userId);
   product
     .save()
     .then((result) => {
@@ -94,7 +99,7 @@ exports.uploadProductImage = (req, res, next) => {
       fs.createWriteStream('./productPictures/image' + Date.now() + '.png')
     );
     res.status(201).json({
-      message: success_messages.user_profile_picture_edited,
+      message: success_messages.product_image_added,
       path: result.path,
     });
   } catch (error) {
@@ -114,7 +119,7 @@ exports.addProductImagePath = (req, res, next) => {
     .then((result) => {
       res.status(201).json({
         message: success_messages.product_image_path_added,
-        imageId: result[0].insertId
+        imageId: result[0].insertId,
       });
     })
     .catch((error) => {
@@ -134,40 +139,60 @@ exports.updateProduct = (req, res, next) => {
     throw error;
   }
   const title = req.body.title;
-  const content = req.body.content;
-  let imageUrl = req.body.image; // no new image was picked
-  if (req.file) {
-    // user picked a new image
-    imageUrl = req.file.path.replace('\\', '/');
-  }
-  if (!imageUrl) {
-    const error = new Error(error_messages.no_image_found);
-    error.statusCode = 422;
-    throw error;
-  }
-  Post.findById(postId)
-    .then((post) => {
-      if (!post) {
+  const price = req.body.price;
+  const description = req.body.description;
+  const userId = req.userId;
+
+  Product.findById(productId)
+    .then(([products]) => {
+      if (products.length === 0) {
         const error = new Error(error_messages.product_not_found);
         error.statusCode = 404;
         throw error;
       }
-      if (post.creator.toString() !== req.userId) {
+      if (products[0].userId.toString() !== userId) {
         const error = new Error(error_messages.not_authorized);
         error.statusCode = 403;
         throw error;
       }
-      if (imageUrl !== post.imageUrl) {
-        // new image was uploaded
-        deleteImage(post.imageUrl);
-      }
-      post.title = title;
-      post.imageUrl = imageUrl;
-      post.content = content;
-      return post.save();
+      const product = new Product(productId, title, price, description, userId);
+      return product.update();
     })
     .then((result) => {
-      res.status(200).json({ message: 'Post updated', post: result });
+      res
+        .status(200)
+        .json({
+          message: success_messages.product_updated,
+          changedRows: result[0].changedRows,
+        });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.updateProductImagePath = (req, res, next) => {
+  const productId = req.params.productId;
+  const oldFileExists = fs.existsSync('.' + req.body.oldpath);
+  if (oldFileExists) {
+    fs.unlinkSync('.' + req.body.oldpath);
+  }
+  Image.deleteByProductIdAndPath(productId, req.body.oldpath)
+    .then((r) => {})
+    .catch((error) => {
+      console.log(error);
+    });
+  const image = new Image(null, req.body.path, productId);
+  image
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: success_messages.product_image_path_added,
+        imageId: result[0].insertId,
+      });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -194,20 +219,20 @@ exports.deleteProduct = (req, res, next) => {
       return Image.findByProductId(productId);
     })
     .then(([images]) => {
-      if(images.length !== 0){
+      if (images.length !== 0) {
         try {
           fs.unlinkSync('.' + images[0].image);
         } catch (error) {
           console.log(error);
-        } 
-      }      
-    })        
+        }
+      }
+    })
     .then(() => {
       return Image.deleteByProductId(productId);
-    })     
+    })
     .then(() => {
       return Product.deleteById(productId);
-    })    
+    })
     .then(() => {
       res.status(200).json({ message: success_messages.product_deleted });
     })

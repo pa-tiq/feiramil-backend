@@ -16,22 +16,24 @@ router.post(
   '/product',
   isAuth,
   [
-    body('title').trim().isLength({ min: 5 }),
-    body('description').trim().isLength({ min: 5 }),
+    body('title').trim().isLength({ min: 1 }),
+    body('description').trim().isLength({ min: 1 }),
   ],
   feedController.createProduct
-); // POST /feed/post
+);
 
 router.patch('/image/', isAuth, feedController.uploadProductImage); // POST /feed/post
 
 router.post('/image/:productId', isAuth, feedController.addProductImagePath); // POST /feed/post
 
+router.put('/image/:productId', isAuth, feedController.updateProductImagePath); // POST /feed/post
+
 router.put(
   '/product/:productId',
   isAuth,
   [
-    body('title').trim().isLength({ min: 5 }),
-    body('content').trim().isLength({ min: 5 }),
+    body('title').trim().isLength({ min: 1 }),
+    body('description').trim().isLength({ min: 1 }),
   ],
   feedController.updateProduct
 );

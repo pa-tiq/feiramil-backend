@@ -18,6 +18,14 @@ module.exports = class Image {
     return db.execute('DELETE FROM images WHERE id = ?', [id]);
   }
 
+  static deleteByProductIdAndPath(productId, path) {
+    return db.execute(
+    `
+    DELETE FROM images 
+    WHERE images.productId = ? and images.image = ?
+    `, [productId, path]);
+  }  
+  
   static deleteByProductId(productId) {
     return db.execute('DELETE FROM images WHERE productId = ?', [productId]);
   }

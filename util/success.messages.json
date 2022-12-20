@@ -8,5 +8,6 @@
   "product_deleted":"Produto deletado.",
   "product_image_added":"Imagem do produto adicionada.",
   "product_image_path_added":"URL da imagem do produto adicionada.",
-  "product_edited":"Produto editado."
+  "product_image_path_edited":"URL da imagem do produto atualizada.",
+  "product_updated":"Produto atualizado."
 }
