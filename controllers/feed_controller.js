@@ -8,8 +8,8 @@ const User = require('../models/user');
 const error_messages = require('../util/error_messages.json');
 const success_messages = require('../util/success.messages.json');
 
-exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+exports.getProductsExeptUser = (req, res, next) => {
+  Product.fetchAllExeptUserId(req.userId)
     .then(([products]) => {
       res.status(200).json({ message: 'Produtos obtidos', products: products }); // 200 = success
     })

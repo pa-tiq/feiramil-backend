@@ -6,7 +6,7 @@ const isAuth = require('../util/is-auth');
 
 const router = express.Router();
 
-router.get('/products', isAuth, feedController.getProducts); // GET /feed/products
+router.get('/:userId', isAuth, feedController.getProductsExeptUser); // GET /feed/
 
 router.get('/products/:userId', isAuth, feedController.getUserProducts); // GET /feed/products
 
@@ -22,17 +22,9 @@ router.post(
   feedController.createProduct
 ); // POST /feed/post
 
-router.patch(
-  '/image/',
-  isAuth,
-  feedController.uploadProductImage
-); // POST /feed/post
+router.patch('/image/', isAuth, feedController.uploadProductImage); // POST /feed/post
 
-router.post(
-  '/image/:productId',
-  isAuth,
-  feedController.addProductImagePath
-); // POST /feed/post
+router.post('/image/:productId', isAuth, feedController.addProductImagePath); // POST /feed/post
 
 router.put(
   '/product/:productId',

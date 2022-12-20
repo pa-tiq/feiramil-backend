@@ -24,6 +24,18 @@ module.exports = class Product {
     return db.execute('SELECT * FROM products');
     //.then(([rows]) => {})
     //.catch((err) => console.log(err));
+  }  
+  
+  static fetchAllExeptUserId(userId) {
+    return db.execute(
+      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
+      U.om as 'userOm', U.phone as 'userPhone', I.image as 'imagePath' 
+      FROM feiramil.products P 
+      INNER JOIN feiramil.users U ON P.userId = U.id
+      LEFT JOIN feiramil.images I on I.productId = P.id  
+      WHERE P.userId != ?;
+      `,
+      [userId]);
   }
 
   static findById(id) {
