@@ -73,9 +73,11 @@ exports.createProduct = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;
   const description = req.body.description;
+  const city = req.body.city;
+  const state = req.body.state;
   const userId = req.userId;
 
-  const product = new Product(null, title, price, description, userId);
+  const product = new Product(null, title, price, description, city, state, userId);
   product
     .save()
     .then((result) => {
@@ -141,6 +143,8 @@ exports.updateProduct = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;
   const description = req.body.description;
+  const city = req.body.city;
+  const state = req.body.state;
   const userId = req.userId;
 
   Product.findById(productId)
@@ -155,7 +159,7 @@ exports.updateProduct = (req, res, next) => {
         error.statusCode = 403;
         throw error;
       }
-      const product = new Product(productId, title, price, description, userId);
+      const product = new Product(productId, title, price, description, city, state, userId);
       return product.update();
     })
     .then((result) => {

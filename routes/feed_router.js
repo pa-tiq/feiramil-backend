@@ -18,6 +18,8 @@ router.post(
   [
     body('title').trim().isLength({ min: 1 }),
     body('description').trim().isLength({ min: 1 }),
+    body('city').trim().isLength({ min: 1 }),
+    body('state').trim().isLength({ min: 1 }),
   ],
   feedController.createProduct
 );
@@ -34,6 +36,8 @@ router.put(
   [
     body('title').trim().isLength({ min: 1 }),
     body('description').trim().isLength({ min: 1 }),
+    body('city').trim().isLength({ min: 1 }),
+    body('state').trim().isLength({ min: 1 }),
   ],
   feedController.updateProduct
 );

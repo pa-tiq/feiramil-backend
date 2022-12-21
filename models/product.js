@@ -1,24 +1,27 @@
 const db = require('../util/database');
 
 module.exports = class Product {
-  constructor(id, title, price, description, userId) {
+  constructor(id, title, price, description, city, state, userId) {
     this.id = id;
     this.title = title;
     this.price = price;
     this.description = description;
+    this.city = city;
+    this.state = state;
     this.userId = userId;
   }
 
   save() {
     return db.execute(
-      'INSERT INTO products (title, price, description, userId) VALUES (?, ?, ?, ?)',
-      [this.title, this.price, this.description, this.userId]
+      `INSERT INTO products (title, price, description, city, userId) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [this.title, this.price, this.description, this.city, this.state, this.userId]
     );
   }
   update() {
     return db.execute(
-      'UPDATE products SET title = ?, price = ?, description = ? WHERE id = ?',
-      [this.title, this.price, this.description, this.id]
+      'UPDATE products SET title = ?, price = ?, description = ?, city = ?, state = ? WHERE id = ?',
+      [this.title, this.price, this.description, this.city, this.state, this.id]
     );
   }
 
