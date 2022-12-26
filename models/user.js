@@ -1,7 +1,7 @@
 const db = require('../util/database');
 
 module.exports = class User {
-  constructor(id, email, password, name, om, phone, photo) {
+  constructor(id, email, password, name, om, phone, photo, city, state) {
     this.id = id;
     this.email = email;
     this.password = password;
@@ -9,6 +9,8 @@ module.exports = class User {
     this.om = om ? om : null;
     this.phone = phone ? phone : null;
     this.photo = photo ? photo : null;
+    this.city = city ? city : null;
+    this.state = state ? state : null;
   }
 
   save() {
@@ -20,13 +22,14 @@ module.exports = class User {
   update() {
     if(this.password === null){
       return db.execute(
-        'UPDATE users SET email = ?, name = ?, om = ?, phone = ? WHERE id = ?',
-        [this.email, this.name, this.om, this.phone, this.id]
+        'UPDATE users SET email = ?, name = ?, om = ?, phone = ?, city = ?, state = ? WHERE id = ?',
+        [this.email, this.name, this.om, this.phone, this.city, this.state, this.id]
       );
     } else {
       return db.execute(
-        'UPDATE users SET email = ?, password = ?, name = ?, om = ?, phone = ? WHERE id = ?',
-        [this.email, this.password, this.name, this.om, this.phone, this.id]
+        `UPDATE users SET email = ?, password = ?, name = ?, om = ?, phone = ?, city = ?, state = ? 
+        WHERE id = ?`,
+        [this.email, this.password, this.name, this.om, this.phone,this.city, this.state, this.id]
       );
     }
   }

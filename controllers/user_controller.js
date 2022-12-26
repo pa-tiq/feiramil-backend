@@ -42,9 +42,11 @@ exports.updateUser = (req, res, next) => {
   const name = req.body.name;
   const om = req.body.om;
   const phone = req.body.phone;
+  const city = req.body.city;
+  const state = req.body.state;
   const newPassword = req.body.password;
   if (!newPassword) {
-    const user = new User(userId, email, null, name, om, phone);
+    const user = new User(userId, email, null, name, om, phone, null, city, state);
     user
       .update()
       .then((result) => {
@@ -63,7 +65,7 @@ exports.updateUser = (req, res, next) => {
     bcrypt
       .hash(newPassword, 12)
       .then((hashedPassword) => {
-        const user = new User(userId, email, hashedPassword, name, om, phone);
+        const user = new User(userId, email, hashedPassword, name, om, phone, null, city, state);
         return user.update();
       })
       .then((result) => {

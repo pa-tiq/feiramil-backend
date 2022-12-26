@@ -68,7 +68,7 @@ exports.createProduct = (req, res, next) => {
   if (!errors.isEmpty()) {
     const error = new Error(error_messages.validation_failed);
     error.statusCode = 422;
-    throw error;
+    next(error);
   }
   const title = req.body.title;
   const price = req.body.price;
