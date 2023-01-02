@@ -76,6 +76,24 @@ exports.login = (req, res, next) => {
     });
 };
 
+exports.tokenLogin = (req, res, next) => {
+  User.findById(req.userId)
+    .then((user) => {
+      if (!user) {
+        const error = new Error('Usuário não encontrado');
+        error.statusCode = 404;
+        throw error;
+      }
+      return res.status(200).json({ userId: `${req.userId}` , message: 'Token válido.' });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
 exports.getUserOM = (req, res, next) => {
   User.findById(req.userId)
     .then((user) => {

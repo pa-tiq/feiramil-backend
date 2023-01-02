@@ -31,6 +31,8 @@ router.post('/login', authController.login);
 
 router.get('/om', isAuth, authController.getUserOM);
 
+router.get('/tokenlogin', isAuth, authController.tokenLogin)
+
 router.patch(
   '/om',
   isAuth,
