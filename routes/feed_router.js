@@ -10,6 +10,22 @@ router.get('/:userId', isAuth, feedController.getProductsExeptUser); // GET /fee
 
 router.get('/products/:userId', isAuth, feedController.getUserProducts); // GET /feed/products
 
+router.get('/favourites/:userId', isAuth, feedController.getUserFavourites);
+
+router.post(
+  '/favourite',
+  isAuth,
+  [body('productId').trim().not().isEmpty()],
+  feedController.addUserFavourite
+);
+
+router.delete(
+  '/favourite',
+  isAuth,
+  [body('productId').trim().not().isEmpty()],
+  feedController.removeUserFavourite
+);
+
 router.get('/product/:productId', isAuth, feedController.getProduct);
 
 router.post(

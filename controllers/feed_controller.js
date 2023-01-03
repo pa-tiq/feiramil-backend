@@ -7,6 +7,7 @@ const Image = require('../models/image');
 const User = require('../models/user');
 const error_messages = require('../util/error_messages.json');
 const success_messages = require('../util/success.messages.json');
+const Favourite = require('../models/favourite');
 
 exports.getProductsExeptUser = (req, res, next) => {
   Product.fetchAllExeptUserId(req.userId)
@@ -33,6 +34,70 @@ exports.getUserProducts = (req, res, next) => {
         message: `Produtos do usuário ${req.userId} obtidos`,
         products: products,
       }); // 200 = success
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.getUserFavourites = (req, res, next) => {
+  Product.findFavouritesByUserId(req.userId)
+    .then(([products]) => {
+      res.status(200).json({
+        message: `Favoritos do usuário ${req.userId} obtidos`,
+        products: products,
+      }); // 200 = success
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.addUserFavourite = (req, res, next) => {
+  const userId = req.userId;
+  const productId = req.body.productId;
+  const favourite = new Favourite(null, userId, productId);
+  favourite
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: success_messages.user_favourite_added,
+        favouriteId: result[0].insertId,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.removeUserFavourite = (req, res, next) => {
+  const userId = req.userId;
+  const productId = req.body.productId;
+  Favourite.findByUserIdAndProductId(userId, productId)
+    .then(([favourites]) => {
+      if (favourites.length === 0) {
+        const error = new Error(error_messages.product_not_found);
+        error.statusCode = 404;
+        throw error;
+      }
+      if (favourites[0].userId != req.userId) {
+        const error = new Error(error_messages.not_authorized);
+        error.statusCode = 403;
+        throw error;
+      }
+      return Favourite.deleteById(favourites[0].id);
+    })
+    .then(() => {
+      res.status(200).json({ message: success_messages.product_deleted });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -77,7 +142,15 @@ exports.createProduct = (req, res, next) => {
   const state = req.body.state;
   const userId = req.userId;
 
-  const product = new Product(null, title, price, description, city, state, userId);
+  const product = new Product(
+    null,
+    title,
+    price,
+    description,
+    city,
+    state,
+    userId
+  );
   product
     .save()
     .then((result) => {
@@ -159,16 +232,22 @@ exports.updateProduct = (req, res, next) => {
         error.statusCode = 403;
         throw error;
       }
-      const product = new Product(productId, title, price, description, city, state, userId);
+      const product = new Product(
+        productId,
+        title,
+        price,
+        description,
+        city,
+        state,
+        userId
+      );
       return product.update();
     })
     .then((result) => {
-      res
-        .status(200)
-        .json({
-          message: success_messages.product_updated,
-          changedRows: result[0].changedRows,
-        });
+      res.status(200).json({
+        message: success_messages.product_updated,
+        changedRows: result[0].changedRows,
+      });
     })
     .catch((error) => {
       if (!error.statusCode) {
