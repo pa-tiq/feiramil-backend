@@ -74,14 +74,21 @@ module.exports = class Product {
     );
   }  
   
-  static findFavouritesByUserId(userId) {
+  static findFavouriteIdsByUserId(userId) {
+    //return db.execute(
+    //  `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
+    //  U.om as 'userOm', U.phone as 'userPhone', I.image as 'imagePath' 
+    //  FROM feiramil.products P
+    //  INNER JOIN feiramil.users U ON P.userId = U.id
+    //  INNER JOIN feiramil.favourites F ON F.productId = P.id
+    //  LEFT JOIN feiramil.images I ON I.productId = P.id
+    //  WHERE F.userId = ?;
+    //  `,
+    //  [userId]
+    //);    
     return db.execute(
-      `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
-      U.om as 'userOm', U.phone as 'userPhone', I.image as 'imagePath' 
-      FROM feiramil.products P
-      INNER JOIN feiramil.users U ON P.userId = U.id
-      INNER JOIN feiramil.favourites F ON F.productId = P.id
-      LEFT JOIN feiramil.images I ON I.productId = P.id
+      `SELECT F.productId as 'productId'
+      FROM feiramil.favourites F
       WHERE F.userId = ?;
       `,
       [userId]

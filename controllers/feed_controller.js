@@ -44,11 +44,15 @@ exports.getUserProducts = (req, res, next) => {
 };
 
 exports.getUserFavourites = (req, res, next) => {
-  Product.findFavouritesByUserId(req.userId)
-    .then(([products]) => {
+  Product.findFavouriteIdsByUserId(req.userId)
+    .then(([productIds]) => {
+      let ids = [];
+      productIds.forEach((item)=>{
+        ids.push(item.productId);
+      })
       res.status(200).json({
         message: `Favoritos do usuário ${req.userId} obtidos`,
-        products: products,
+        productIds: ids,
       }); // 200 = success
     })
     .catch((error) => {
@@ -207,6 +211,7 @@ exports.addProductImagePath = (req, res, next) => {
 
 exports.updateProduct = (req, res, next) => {
   const productId = req.params.productId;
+  console.log(req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error(error_messages.validation_failed);

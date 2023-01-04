@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-)
-
+);
 
 CREATE TABLE IF NOT EXISTS `products` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
