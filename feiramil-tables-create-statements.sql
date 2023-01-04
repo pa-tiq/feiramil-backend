@@ -6,11 +6,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `om` varchar(20) DEFAULT NULL,
   `phone` varchar(45) DEFAULT NULL,
   `photo` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `state` varchar(45) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-);
+)
+
 
 CREATE TABLE IF NOT EXISTS `products` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
