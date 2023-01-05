@@ -10,5 +10,7 @@
   "product_image_path_added":"URL da imagem do produto adicionada.",
   "product_image_path_edited":"URL da imagem do produto atualizada.",
   "product_updated":"Produto atualizado.",
-  "user_favourite_added":"Favorito adicionado."
+  "user_favourite_added":"Favorito adicionado.",
+  "user_city_filter_added":"Filtro de cidade adicionado.",
+  "user_city_filter_deleted":"Filtro de cidade deletado."
 }

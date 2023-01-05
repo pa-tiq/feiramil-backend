@@ -42,7 +42,7 @@ pool.promise().execute(
     \`title\` varchar(45) NOT NULL,
     \`price\` double DEFAULT NULL,
     \`description\` varchar(255) NOT NULL,
-    \`city\` varchar(45) NOT NULL,
+    \`city\` varchar(255) NOT NULL,
     \`state\` varchar(45) NOT NULL,
     \`userId\` int unsigned NOT NULL,
     \`created_at\` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -81,6 +81,22 @@ pool.promise().execute(
     KEY \`productId_idx\` (\`productId\`),
     CONSTRAINT \`productFavouriteId\` FOREIGN KEY (\`productId\`) REFERENCES \`products\` (\`id\`),
     CONSTRAINT \`userFavouriteId\` FOREIGN KEY (\`userId\`) REFERENCES \`users\` (\`id\`)
+  );  
+  `
+);
+
+pool.promise().execute(
+  `  
+  CREATE TABLE IF NOT EXISTS \`cityfilters\` (
+    \`id\` int unsigned NOT NULL AUTO_INCREMENT,
+    \`userId\` int unsigned NOT NULL,
+    \`city\` varchar(255) NOT NULL,
+    \`state\` varchar(45) NOT NULL,
+    \`created_at\` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (\`id\`),
+    UNIQUE KEY \`id_UNIQUE\` (\`id\`),
+    KEY \`userId_idx\` (\`userId\`),
+    CONSTRAINT \`userCityFiltersId\` FOREIGN KEY (\`userId\`) REFERENCES \`users\` (\`id\`)
   );  
   `
 );

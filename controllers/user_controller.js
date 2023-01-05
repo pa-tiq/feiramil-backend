@@ -6,6 +6,7 @@ const success_messages = require('../util/success.messages.json');
 
 const Product = require('../models/product');
 const User = require('../models/user');
+const CityFilter =  require('../models/cityFilter');
 
 exports.getUser = (req, res, next) => {
   const userId = req.userId;
@@ -121,4 +122,49 @@ exports.uploadPhoto = (req, res) => {
     }
     throw error;
   }
+};
+
+exports.addFilter = (req,res) => {
+  const userId = req.userId;
+  const city = req.body.city;
+  const state = req.body.state;
+  const cityfilter = new CityFilter(null, userId, city, state);
+  cityfilter
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: success_messages.user_city_filter_added,
+        changedRows: result[0].changedRows,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+}
+
+exports.deleteFilter = (req, res, next) => {
+  const userId = req.userId;
+  const city = req.body.city;
+  const state = req.body.state;
+  CityFilter.findByUserIdCityState(userId,city,state)
+    .then(([filters]) => {
+      if(filters.length > 0){
+        return CityFilter.deleteById(fiters[0].id);
+      }
+    })
+    .then((result) => {
+      res.status(201).json({
+        message: success_messages.user_city_filter_added,
+        changedRows: result[0].changedRows,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
 };
