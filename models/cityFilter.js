@@ -14,6 +14,14 @@ module.exports = class CityFilter {
       this.city,
       this.state,
     ]);
+  }  
+  update() {
+    return db.execute('UPDATE cityfilters SET userId = ?, city = ?, state = ? WHERE id = ?', [
+      this.userId,
+      this.city,
+      this.state,
+      this.id,
+    ]);
   }
 
   static deleteById(id) {
@@ -24,6 +32,11 @@ module.exports = class CityFilter {
   static findByUserId(userId) {
     return db.execute('SELECT * FROM cityfilters WHERE cityfilters.userId = ?', [
       userId,
+    ]);
+  }    
+  static findById(id) {
+    return db.execute('SELECT * FROM cityfilters WHERE cityfilters.id = ?', [
+      id,
     ]);
   }  
   static findByUserIdCityState(userId,city,state) {

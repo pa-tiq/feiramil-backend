@@ -134,7 +134,34 @@ exports.addFilter = (req,res) => {
     .then((result) => {
       res.status(201).json({
         message: success_messages.user_city_filter_added,
-        changedRows: result[0].changedRows,
+        filterId: result[0].insertId,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+}
+
+exports.updateFilter = (req,res) => {
+  const userId = req.userId;
+  const filterId = req.filterId;
+  const city = req.body.city;
+  const state = req.body.state;
+  CityFilter.findById(filterId)
+    .then(([filters]) => {
+      if(filters.length > 0){
+        id = filters[filters.length-1].id;
+        const newFilter = new CityFilter(filterId, userId, city, state);
+        return newFilter.update();
+      }
+    })
+    .then((result) => {
+      res.status(200).json({
+        message: success_messages.user_city_filter_deleted,
+        filterId: id,
       });
     })
     .catch((error) => {
@@ -149,16 +176,18 @@ exports.deleteFilter = (req, res, next) => {
   const userId = req.userId;
   const city = req.body.city;
   const state = req.body.state;
+  let id;
   CityFilter.findByUserIdCityState(userId,city,state)
     .then(([filters]) => {
       if(filters.length > 0){
-        return CityFilter.deleteById(fiters[filters.length-1].id);
+        id = filters[filters.length-1].id;
+        return CityFilter.deleteById(id);
       }
     })
     .then((result) => {
-      res.status(201).json({
-        message: success_messages.user_city_filter_added,
-        changedRows: result[0].changedRows,
+      res.status(200).json({
+        message: success_messages.user_city_filter_deleted,
+        filterId: id,
       });
     })
     .catch((error) => {

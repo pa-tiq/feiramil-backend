@@ -37,6 +37,12 @@ router.post(
   userController.addFilter
 );
 
+router.put(
+  '/filter',
+  isAuth,
+  userController.updateFilter
+);
+
 router.delete(
   '/filter',
   isAuth,
