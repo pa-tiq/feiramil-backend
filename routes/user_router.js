@@ -31,5 +31,17 @@ router.patch(
   userController.uploadPhoto
 );
 
+router.post(
+  '/filter',
+  isAuth,
+  userController.addFilter
+);
+
+router.delete(
+  '/filter',
+  isAuth,
+  userController.addFilter
+);
+
 
 module.exports = router;

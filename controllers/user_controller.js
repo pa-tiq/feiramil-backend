@@ -152,7 +152,7 @@ exports.deleteFilter = (req, res, next) => {
   CityFilter.findByUserIdCityState(userId,city,state)
     .then(([filters]) => {
       if(filters.length > 0){
-        return CityFilter.deleteById(fiters[0].id);
+        return CityFilter.deleteById(fiters[filters.length-1].id);
       }
     })
     .then((result) => {
