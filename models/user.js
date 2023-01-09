@@ -1,7 +1,18 @@
 const db = require('../util/database');
 
 module.exports = class User {
-  constructor(id, email, password, name, om, phone, photo, city, state) {
+  constructor(
+    id,
+    email,
+    password,
+    name,
+    om,
+    phone,
+    photo,
+    city,
+    state,
+    filter
+  ) {
     this.id = id;
     this.email = email;
     this.password = password;
@@ -11,6 +22,7 @@ module.exports = class User {
     this.photo = photo ? photo : null;
     this.city = city ? city : null;
     this.state = state ? state : null;
+    this.filter = filter ? filter : null;
   }
 
   save() {
@@ -18,26 +30,43 @@ module.exports = class User {
       'INSERT INTO users (email, password, name, om, phone, photo) VALUES (?, ?, ?, ?, ?, ?)',
       [this.email, this.password, this.name, this.om, this.phone, this.photo]
     );
-  }  
+  }
   update() {
-    if(this.password === null){
+    if (this.password === null) {
       return db.execute(
         'UPDATE users SET email = ?, name = ?, om = ?, phone = ?, city = ?, state = ? WHERE id = ?',
-        [this.email, this.name, this.om, this.phone, this.city, this.state, this.id]
+        [
+          this.email,
+          this.name,
+          this.om,
+          this.phone,
+          this.city,
+          this.state,
+          this.id,
+        ]
       );
     } else {
       return db.execute(
         `UPDATE users SET email = ?, password = ?, name = ?, om = ?, phone = ?, city = ?, state = ? 
         WHERE id = ?`,
-        [this.email, this.password, this.name, this.om, this.phone,this.city, this.state, this.id]
+        [
+          this.email,
+          this.password,
+          this.name,
+          this.om,
+          this.phone,
+          this.city,
+          this.state,
+          this.id,
+        ]
       );
     }
   }
   updatePhoto() {
-    return db.execute(
-      'UPDATE users SET photo = ? WHERE id = ?',
-      [this.photo, this.id]
-    );
+    return db.execute('UPDATE users SET photo = ? WHERE id = ?', [
+      this.photo,
+      this.id,
+    ]);
   }
 
   static deleteById(id) {
@@ -46,7 +75,7 @@ module.exports = class User {
 
   static fetchAll() {
     return db.execute('SELECT * FROM users');
-  } 
+  }
 
   static findById(id) {
     return db.execute('SELECT * FROM users WHERE users.id = ?', [id]);
@@ -60,4 +89,7 @@ module.exports = class User {
     return db.execute('SELECT * FROM products WHERE products.userId = ?', [id]);
   }
 
+  static updateFilterByUserId(filter, userId) {
+    return db.execute('UPDATE users SET filter = ? WHERE id = ?', [filter, userId]);
+  }
 };

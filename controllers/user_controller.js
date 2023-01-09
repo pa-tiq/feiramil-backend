@@ -184,7 +184,7 @@ exports.addFilter = (req, res) => {
 
 exports.updateFilter = (req, res) => {
   const userId = req.userId;
-  const filterId = req.filterId;
+  const filterId = req.body.id;
   const city = req.body.city;
   const state = req.body.state;
   CityFilter.findById(filterId)
@@ -199,6 +199,23 @@ exports.updateFilter = (req, res) => {
       res.status(200).json({
         message: success_messages.user_city_filter_deleted,
         filterId: id,
+      });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.updateFiltering = (req, res) => {
+  const userId = req.userId;
+  const filtering = req.body.filtering;
+  User.updateFilterByUserId(filtering,userId)
+    .then((result) => {
+      res.status(200).json({
+        message: success_messages.user_edited,
       });
     })
     .catch((error) => {
