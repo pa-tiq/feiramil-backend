@@ -31,6 +31,12 @@ router.patch(
   userController.uploadPhoto
 );
 
+router.get(
+  '/filter',
+  isAuth,
+  userController.getFilters
+);
+
 router.post(
   '/filter',
   isAuth,
@@ -46,7 +52,7 @@ router.put(
 router.delete(
   '/filter',
   isAuth,
-  userController.addFilter
+  userController.deleteFilter
 );
 
 

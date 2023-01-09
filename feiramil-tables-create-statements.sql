@@ -51,3 +51,15 @@ CREATE TABLE IF NOT EXISTS `favourites` (
   CONSTRAINT `productFavouriteId` FOREIGN KEY (`productId`) REFERENCES `products` (`id`),
   CONSTRAINT `userFavouriteId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `cityfilters` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `userId` int unsigned NOT NULL,
+  `city` varchar(255) NOT NULL,
+  `state` varchar(45) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `userId_idx` (`userId`),
+  CONSTRAINT `userCityFiltersId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
+);

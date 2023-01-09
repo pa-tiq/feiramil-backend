@@ -6,7 +6,7 @@ const success_messages = require('../util/success.messages.json');
 
 const Product = require('../models/product');
 const User = require('../models/user');
-const CityFilter =  require('../models/cityFilter');
+const CityFilter = require('../models/cityFilter');
 
 exports.getUser = (req, res, next) => {
   const userId = req.userId;
@@ -19,7 +19,9 @@ exports.getUser = (req, res, next) => {
         throw error;
       }
       loadedUser = users[0];
-      res.status(200).json({ message: success_messages.user_fetched, user: loadedUser });
+      res
+        .status(200)
+        .json({ message: success_messages.user_fetched, user: loadedUser });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -47,7 +49,17 @@ exports.updateUser = (req, res, next) => {
   const state = req.body.state;
   const newPassword = req.body.password;
   if (!newPassword) {
-    const user = new User(userId, email, null, name, om, phone, null, city, state);
+    const user = new User(
+      userId,
+      email,
+      null,
+      name,
+      om,
+      phone,
+      null,
+      city,
+      state
+    );
     user
       .update()
       .then((result) => {
@@ -66,7 +78,17 @@ exports.updateUser = (req, res, next) => {
     bcrypt
       .hash(newPassword, 12)
       .then((hashedPassword) => {
-        const user = new User(userId, email, hashedPassword, name, om, phone, null, city, state);
+        const user = new User(
+          userId,
+          email,
+          hashedPassword,
+          name,
+          om,
+          phone,
+          null,
+          city,
+          state
+        );
         return user.update();
       })
       .then((result) => {
@@ -124,7 +146,22 @@ exports.uploadPhoto = (req, res) => {
   }
 };
 
-exports.addFilter = (req,res) => {
+exports.getFilters = (req, res, next) => {
+  CityFilter.findByUserId(req.userId)
+    .then(([filters]) => {
+      res
+        .status(200)
+        .json({ message: success_messages.user_fetched, filters: filters });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
+};
+
+exports.addFilter = (req, res) => {
   const userId = req.userId;
   const city = req.body.city;
   const state = req.body.state;
@@ -143,17 +180,17 @@ exports.addFilter = (req,res) => {
       }
       next(error);
     });
-}
+};
 
-exports.updateFilter = (req,res) => {
+exports.updateFilter = (req, res) => {
   const userId = req.userId;
   const filterId = req.filterId;
   const city = req.body.city;
   const state = req.body.state;
   CityFilter.findById(filterId)
     .then(([filters]) => {
-      if(filters.length > 0){
-        id = filters[filters.length-1].id;
+      if (filters.length > 0) {
+        id = filters[filters.length - 1].id;
         const newFilter = new CityFilter(filterId, userId, city, state);
         return newFilter.update();
       }
@@ -170,18 +207,22 @@ exports.updateFilter = (req,res) => {
       }
       next(error);
     });
-}
+};
 
 exports.deleteFilter = (req, res, next) => {
   const userId = req.userId;
-  const city = req.body.city;
-  const state = req.body.state;
-  let id;
-  CityFilter.findByUserIdCityState(userId,city,state)
+  const id = req.body.id;
+  CityFilter.findById(id)
     .then(([filters]) => {
-      if(filters.length > 0){
-        id = filters[filters.length-1].id;
-        return CityFilter.deleteById(id);
+      if (filters.length > 0) {
+        if(filters[filters.length - 1].userId == userId){
+          return CityFilter.deleteById(id);
+        }
+        else{
+          const error = new Error(error_messages.not_authorized);
+          error.statusCode = 403;
+          throw error;
+        }
       }
     })
     .then((result) => {

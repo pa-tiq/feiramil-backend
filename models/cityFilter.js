@@ -25,12 +25,12 @@ module.exports = class CityFilter {
   }
 
   static deleteById(id) {
-    return db.execute('SELECT * FROM cityfilters WHERE cityfilters.id = ?', [
+    return db.execute('DELETE FROM cityfilters WHERE cityfilters.id = ?', [
       id,
     ]);
   }    
   static findByUserId(userId) {
-    return db.execute('SELECT * FROM cityfilters WHERE cityfilters.userId = ?', [
+    return db.execute('SELECT id, userId, city, state FROM cityfilters WHERE cityfilters.userId = ?', [
       userId,
     ]);
   }    
