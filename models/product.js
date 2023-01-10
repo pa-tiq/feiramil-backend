@@ -38,11 +38,12 @@ module.exports = class Product {
   static fetchAllExeptUserId(userId) {
     return db.execute(
       `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
-      U.om as 'userOm', U.phone as 'userPhone', I.image as 'imagePath' 
+      U.om as 'userOm', U.phone as 'userPhone', GROUP_CONCAT(I.image) as 'imagePaths' 
       FROM feiramil.products P 
       INNER JOIN feiramil.users U ON P.userId = U.id
       LEFT JOIN feiramil.images I on I.productId = P.id  
-      WHERE P.userId != ?;
+      WHERE P.userId != ?
+      GROUP BY P.id;
       `,
       [userId]);
   }
@@ -51,11 +52,12 @@ module.exports = class Product {
     return db.execute(
       `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
       U.om as 'userOm', U.phone as 'userPhone', U.photo as 'userPhoto', 
-      I.image as 'imagePath' 
+      GROUP_CONCAT(I.image) as 'imagePaths' 
       FROM feiramil.products P 
       INNER JOIN feiramil.users U ON P.userId = U.id
       LEFT JOIN feiramil.images I on I.productId = P.id  
-      WHERE P.id = ?;
+      WHERE P.id = ?
+      GROUP BY P.id;
       `,
       [id]
     );
@@ -64,11 +66,12 @@ module.exports = class Product {
   static findByUserId(userId) {
     return db.execute(
       `SELECT P.*, U.name as 'userName', U.email as 'userEmail', 
-      U.om as 'userOm', U.phone as 'userPhone', I.image as 'imagePath' 
+      U.om as 'userOm', U.phone as 'userPhone', GROUP_CONCAT(I.image) as 'imagePaths' 
       FROM feiramil.products P 
       INNER JOIN feiramil.users U ON P.userId = U.id
       LEFT JOIN feiramil.images I on I.productId = P.id  
-      WHERE P.userId = ?;
+      WHERE P.userId = ?
+      GROUP BY P.id;
       `,
       [userId]
     );

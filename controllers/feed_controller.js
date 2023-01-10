@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
+const { v4: uuidv4 } = require('uuid');
 
 const Product = require('../models/product');
 const Image = require('../models/image');
@@ -47,9 +48,9 @@ exports.getUserFavourites = (req, res, next) => {
   Product.findFavouriteIdsByUserId(req.userId)
     .then(([productIds]) => {
       let ids = [];
-      productIds.forEach((item)=>{
+      productIds.forEach((item) => {
         ids.push(item.productId);
-      })
+      });
       res.status(200).json({
         message: `Favoritos do usuário ${req.userId} obtidos`,
         productIds: ids,
@@ -175,7 +176,7 @@ exports.createProduct = (req, res, next) => {
 exports.uploadProductImage = (req, res) => {
   try {
     const result = req.pipe(
-      fs.createWriteStream('./productPictures/image' + Date.now() + '.png')
+      fs.createWriteStream('./productPictures/' + uuidv4() + '.png')
     );
     res.status(201).json({
       message: success_messages.product_image_added,
@@ -189,24 +190,29 @@ exports.uploadProductImage = (req, res) => {
   }
 };
 
-exports.addProductImagePath = (req, res, next) => {
+exports.addProductImagePaths = (req, res, next) => {
   const userId = req.userId;
   const productId = req.params.productId;
-  const image = new Image(null, req.body.path, productId);
-  image
-    .save()
-    .then((result) => {
-      res.status(201).json({
-        message: success_messages.product_image_path_added,
-        imageId: result[0].insertId,
+  const paths = req.body.paths;
+  let imageIds = [];
+  for (const path of paths){
+    const image = new Image(null, path, productId);
+    image
+      .save()
+      .then((result) => {
+        imageIds.push({imageId: result[0].insertId});
+      })
+      .catch((error) => {
+        if (!error.statusCode) {
+          error.statusCode = 500;
+        }
+        next(error);
       });
-    })
-    .catch((error) => {
-      if (!error.statusCode) {
-        error.statusCode = 500;
-      }
-      next(error);
-    });
+  }
+  res.status(201).json({
+    message: success_messages.product_image_path_added,
+    imageIds: imageIds,
+  });
 };
 
 exports.updateProduct = (req, res, next) => {
