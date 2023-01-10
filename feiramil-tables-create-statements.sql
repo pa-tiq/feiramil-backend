@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `photo` varchar(255) DEFAULT NULL,
   `city` varchar(255) DEFAULT NULL,
   `state` varchar(45) DEFAULT NULL,
+  `filter` tinyint DEFAULT 0,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
@@ -52,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `favourites` (
   CONSTRAINT `userFavouriteId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
 );
 
-CREATE TABLE `cityfilters` (
+CREATE TABLE IF NOT EXISTS `cityfilters` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `userId` int unsigned NOT NULL,
   `city` varchar(255) NOT NULL,
