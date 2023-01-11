@@ -7,5 +7,6 @@
   "not_authorized":"Não autorizado.",
   "not_authenticated":"Não autenticado.",
   "user_not_found":"Um usuário com esse e-mail não foi encontrado.",
-  "wrong_password":"Senha errada."
+  "wrong_password":"Senha errada.",
+  "email_error":"Erro ao enviar e-mail de confirmação. Verifique o e-mail inserido."
 }
