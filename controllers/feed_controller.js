@@ -277,7 +277,6 @@ exports.updateProductImagePaths = (req, res, next) => {
 
   res.status(201).json({
     message: success_messages.product_image_path_added,
-    imageIds: imageIds,
   });
 };
 
