@@ -12,6 +12,14 @@ module.exports = class Image {
       this.image,
       this.productId,
     ]);
+  }  
+  
+  update() {
+    return db.execute('UPDATE images SET image = ?, productId = ? WHERE id = ?', [
+      this.image,
+      this.productId,
+      this.id
+    ]);
   }
 
   static deleteById(id) {
@@ -22,6 +30,14 @@ module.exports = class Image {
     return db.execute(
     `
     DELETE FROM images 
+    WHERE images.productId = ? and images.image = ?
+    `, [productId, path]);
+  }  
+    
+  static findByProductIdAndPath(productId, path) {
+    return db.execute(
+    `
+    SELECT * FROM images 
     WHERE images.productId = ? and images.image = ?
     `, [productId, path]);
   }  
