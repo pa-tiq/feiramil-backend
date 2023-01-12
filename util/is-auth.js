@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const keys = require('../keys.json');
-const error_messages = require('./error_messages.json');
+const error_messages = require('../constants/error_messages.json');
 
 module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');

@@ -7,6 +7,7 @@
   "product_added":"Produto adicionado.",
   "product_deleted":"Produto deletado.",
   "product_image_added":"Imagem do produto adicionada.",
+  "product_image_deleted":"Imagem do produto removida.",
   "product_image_path_added":"URL da imagem do produto adicionada.",
   "product_image_path_edited":"URL da imagem do produto atualizada.",
   "product_updated":"Produto atualizado.",

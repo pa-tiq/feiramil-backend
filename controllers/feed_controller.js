@@ -6,8 +6,8 @@ const { v4: uuidv4 } = require('uuid');
 const Product = require('../models/product');
 const Image = require('../models/image');
 const User = require('../models/user');
-const error_messages = require('../util/error_messages.json');
-const success_messages = require('../util/success.messages.json');
+const error_messages = require('../constants/error_messages.json');
+const success_messages = require('../constants/success_messages.json');
 const Favourite = require('../models/favourite');
 
 exports.getProductsExeptUser = (req, res, next) => {
@@ -215,6 +215,30 @@ exports.addProductImagePaths = (req, res, next) => {
   });
 };
 
+exports.deleteProductImagePaths = (req, res, next) => {
+  const productId = req.params.productId;
+  const paths = req.body.paths;
+  for (const path of paths) {
+    const oldFileExists = fs.existsSync('.' + path);
+    if (oldFileExists) {
+      fs.unlinkSync('.' + path);
+    }
+    Image.findByProductIdAndPath(productId, path).then(([images]) => {
+      Image.deleteById(images[0].id)
+        .then((r) => {})
+        .catch((error) => {
+          if (!error.statusCode) {
+            error.statusCode = 500;
+          }
+          next(error);
+        });
+    });
+  }
+  res.status(200).json({
+    message: success_messages.product_image_deleted,
+  });
+};
+
 exports.updateProductImagePaths = (req, res, next) => {
   const productId = req.params.productId;
   let oldImageIds = [];
@@ -231,12 +255,15 @@ exports.updateProductImagePaths = (req, res, next) => {
         .update()
         .then((r) => {})
         .catch((error) => {
-          console.log(error);
+          if (!error.statusCode) {
+            error.statusCode = 500;
+          }
+          next(error);
         });
-        counter++;
-    }); 
+      counter++;
+    });
   }
-  
+
   res.status(201).json({
     message: success_messages.product_image_path_added,
   });

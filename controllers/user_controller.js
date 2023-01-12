@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
-const error_messages = require('../util/error_messages.json');
-const success_messages = require('../util/success.messages.json');
+const error_messages = require('../constants/error_messages.json');
+const success_messages = require('../constants/success_messages.json');
 
-const Product = require('../models/product');
 const User = require('../models/user');
 const CityFilter = require('../models/cityFilter');
 

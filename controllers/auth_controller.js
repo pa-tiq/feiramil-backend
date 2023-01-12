@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../keys.json');
-const error_messages = require('../util/error_messages.json');
+const error_messages = require('../constants/error_messages.json');
 const mailer = require('../util/email');
 
 const User = require('../models/user');

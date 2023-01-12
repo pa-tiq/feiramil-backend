@@ -40,11 +40,13 @@ router.post(
   feedController.createProduct
 );
 
-router.patch('/image', isAuth, feedController.uploadProductImage); // POST /feed/post
+router.patch('/image', isAuth, feedController.uploadProductImage); 
 
-router.post('/image/:productId', isAuth, feedController.addProductImagePaths); // POST /feed/post
+router.post('/image/:productId', isAuth, feedController.addProductImagePaths);
 
-router.put('/image/:productId', isAuth, feedController.updateProductImagePaths); // POST /feed/post
+router.put('/image/:productId', isAuth, feedController.updateProductImagePaths); 
+
+router.delete('/image/:productId', isAuth, feedController.deleteProductImagePaths); 
 
 router.put(
   '/product/:productId',
