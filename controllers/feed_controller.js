@@ -224,9 +224,7 @@ exports.updateProductImagePaths = (req, res, next) => {
     if (oldFileExists) {
       fs.unlinkSync('.' + oldpath);
     }
-    //console.log('productId:', productId, ' oldpath:', oldpath);
     Image.findByProductIdAndPath(productId, oldpath).then(([images]) => {
-      //console.log('images found: ', images);
       oldImageIds.push(images[0].id);
       const image = new Image(images[0].id, req.body.paths[counter], productId);
       image
@@ -235,46 +233,10 @@ exports.updateProductImagePaths = (req, res, next) => {
         .catch((error) => {
           console.log(error);
         });
-    });
-    counter++;
+        counter++;
+    }); 
   }
   
-  //console.log(oldImageIds);
-  //let imageIds = [];
-  //
-  //for (const path of req.body.paths) {
-  //  if(oldImageIds[counter]){
-  //    const image = new Image(oldImageIds[counter], path, productId);
-  //    image
-  //      .saveWithId()
-  //      .then((result) => {
-  //        imageIds.push({ imageId: result[0].insertId });
-  //      })
-  //      .catch((error) => {
-  //        if (!error.statusCode) {
-  //          error.statusCode = 500;
-  //        }
-  //        next(error);
-  //      });
-  //  }
-  //  else{
-  //    const image = new Image(null, path, productId);
-  //    image
-  //      .save()
-  //      .then((result) => {
-  //        imageIds.push({ imageId: result[0].insertId });
-  //      })
-  //      .catch((error) => {
-  //        if (!error.statusCode) {
-  //          error.statusCode = 500;
-  //        }
-  //        next(error);
-  //      });
-  //  }
-  //
-  //  counter++;
-  //}
-
   res.status(201).json({
     message: success_messages.product_image_path_added,
   });
