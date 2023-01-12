@@ -20,22 +20,22 @@ exports.signup = (req, res, next) => {
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
-      const mailOptions = {
-        from: 'patrick@ime.eb.br',
-        to: email,
-        subject: 'Feiramil - E-mail de confirmação',
-        text: 'That was easy!',
-      };
-      mailer.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-          const err = new Error(error_messages.email_error);
-          err.statusCode = 403;
-          throw err;
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
+      //const mailOptions = {
+      //  from: 'patrick@ime.eb.br',
+      //  to: email,
+      //  subject: 'Feiramil - E-mail de confirmação',
+      //  text: 'That was easy!',
+      //};
+      //mailer.sendMail(mailOptions, function (error, info) {
+      //  if (error) {
+      //    console.log(error);
+      //    const err = new Error(error_messages.email_error);
+      //    err.statusCode = 403;
+      //    throw err;
+      //  } else {
+      //    console.log('Email sent: ' + info.response);
+      //  }
+      //});
       const user = new User(null, email, hashedPassword, null, null, null);
       return user.save();
     })

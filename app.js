@@ -83,7 +83,9 @@ app.use((error, req, res, next) => {
   const status = error.statusCode || 500; // if error.statusCode is undefined, then status = 500
   const message = error.message;
   const data = error.data;
-  res.status(status).json({ message: message, data: data });
+  //if (!message.includes('invalid signature')){
+    res.status(status).json({ message: message, data: data });
+  //}
 });
 
 app.listen(8080);
