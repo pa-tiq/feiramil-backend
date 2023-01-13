@@ -11,7 +11,8 @@ module.exports = class User {
     photo,
     city,
     state,
-    filter
+    filter,
+    emailConfirmed
   ) {
     this.id = id;
     this.email = email;
@@ -23,12 +24,13 @@ module.exports = class User {
     this.city = city ? city : null;
     this.state = state ? state : null;
     this.filter = filter ? filter : null;
+    this.emailConfirmed = emailConfirmed ? emailConfirmed : null;
   }
 
   save() {
     return db.execute(
-      'INSERT INTO users (email, password, name, om, phone, photo, city, state, filter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [this.email, this.password, this.name, this.om, this.phone, this.photo, this.city, this.state, this.filter]
+      'INSERT INTO users (email, password, name, om, phone, photo, city, state, filter, emailConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [this.email, this.password, this.name, this.om, this.phone, this.photo, this.city, this.state, this.filter, this.emailConfirmed]
     );
   }
   update() {
