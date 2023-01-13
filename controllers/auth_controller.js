@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const keys = require('../keys.json');
 const error_messages = require('../constants/error_messages.json');
 const mailer = require('../util/email');
-
 const User = require('../models/user');
+const email_confirmation_screen = require('../util/email_confirmation_screen');
 
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
@@ -17,34 +17,45 @@ exports.signup = (req, res, next) => {
   }
   const email = req.body.email;
   const password = req.body.password;
+  const confirmation_code = `${Math.random()}`.substring(2,7);
+  let emailSent = false;
+  let hashedPassword = '';  
   bcrypt
     .hash(password, 12)
-    .then((hashedPassword) => {
-      //const mailOptions = {
-      //  from: 'patrick@ime.eb.br',
-      //  to: email,
-      //  subject: 'Feiramil - E-mail de confirmação',
-      //  text: 'That was easy!',
-      //};
-      //mailer.sendMail(mailOptions, function (error, info) {
-      //  if (error) {
-      //    console.log(error);
-      //    const err = new Error(error_messages.email_error);
-      //    err.statusCode = 403;
-      //    throw err;
-      //  } else {
-      //    console.log('Email sent: ' + info.response);
-      //  }
-      //});
-      const user = new User(null, email, hashedPassword, null, null, null);
-      return user.save();
+    .then((hash) => {
+      hashedPassword = hash;
+      const mailOptions = {
+        from: 'patrick@ime.eb.br',
+        to: email,
+        subject: 'Feiramil - E-mail de confirmação',
+        html: email_confirmation_screen(confirmation_code),
+      };
+      return mailer.sendMail(mailOptions)
+    }).then((info) => {
+        emailSent=false;
+        if (info.rejected.length > 0) {
+          const err = new Error(error_messages.email_error);
+          err.statusCode = 403;
+          throw err;
+        } else {
+          console.log('Email sent: ' + info.response);
+          emailSent=true;
+        }
+        if(emailSent){
+          const user = new User(null, email, hashedPassword);
+          return user.save();
+        }
+        else {
+          const err = new Error(error_messages.email_error);
+          err.statusCode = 403;
+          throw err;
+        }
     })
     .then((result) => {
       res
         .status(201)
         .json({
           message: 'Usuário criado e e-mail de confirmação enviado',
-          userId: result[0].insertId,
         });
     })
     .catch((error) => {
@@ -63,7 +74,7 @@ exports.login = (req, res, next) => {
     .then(([users]) => {
       if (users.length === 0) {
         const error = new Error(error_messages.user_not_found);
-        error.statusCode = 401;
+        error.statusCode = 404;
         throw error;
       }
       loadedUser = users[0];

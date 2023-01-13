@@ -27,8 +27,8 @@ module.exports = class User {
 
   save() {
     return db.execute(
-      'INSERT INTO users (email, password, name, om, phone, photo) VALUES (?, ?, ?, ?, ?, ?)',
-      [this.email, this.password, this.name, this.om, this.phone, this.photo]
+      'INSERT INTO users (email, password, name, om, phone, photo, city, state, filter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [this.email, this.password, this.name, this.om, this.phone, this.photo, this.city, this.state, this.filter]
     );
   }
   update() {
