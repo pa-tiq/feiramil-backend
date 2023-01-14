@@ -8,5 +8,7 @@
   "not_authenticated":"Não autenticado.",
   "user_not_found":"Um usuário com esse e-mail não foi encontrado.",
   "wrong_password":"Senha errada.",
-  "email_error":"Erro ao enviar e-mail de confirmação. Verifique o e-mail inserido."
+  "email_error":"Erro ao enviar e-mail de confirmação. Verifique o e-mail inserido.",
+  "email_confirmation_code_missing":"Insira o código de confirmação enviado ao seu e-mail.",
+  "email_confirmation_code_wrong":"O código de confirmação inserido está errado."
 }

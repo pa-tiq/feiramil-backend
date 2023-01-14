@@ -17,9 +17,9 @@ exports.signup = (req, res, next) => {
   }
   const email = req.body.email;
   const password = req.body.password;
-  const confirmation_code = `${Math.random()}`.substring(2,7);
+  const confirmation_code = `${Math.random()}`.substring(2, 7);
   let emailSent = false;
-  let hashedPassword = '';  
+  let hashedPassword = '';
   bcrypt
     .hash(password, 12)
     .then((hash) => {
@@ -30,33 +30,44 @@ exports.signup = (req, res, next) => {
         subject: 'Feiramil - E-mail de confirmação',
         html: email_confirmation_screen(confirmation_code),
       };
-      return mailer.sendMail(mailOptions)
-    }).then((info) => {
-        emailSent=false;
-        if (info.rejected.length > 0) {
-          const err = new Error(error_messages.email_error);
-          err.statusCode = 403;
-          throw err;
-        } else {
-          console.log('Email sent: ' + info.response);
-          emailSent=true;
-        }
-        if(emailSent){
-          const user = new User(null, email, hashedPassword);
-          return user.save();
-        }
-        else {
-          const err = new Error(error_messages.email_error);
-          err.statusCode = 403;
-          throw err;
-        }
+      return mailer.sendMail(mailOptions);
+    })
+    .then((info) => {
+      emailSent = false;
+      if (info.rejected.length > 0) {
+        const err = new Error(error_messages.email_error);
+        err.statusCode = 403;
+        throw err;
+      } else {
+        console.log('Email sent: ' + info.response);
+        emailSent = true;
+      }
+      if (emailSent) {
+        const user = new User(
+          null,
+          email,
+          hashedPassword,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          '0',
+          confirmation_code
+        );
+        return user.save();
+      } else {
+        const err = new Error(error_messages.email_error);
+        err.statusCode = 403;
+        throw err;
+      }
     })
     .then((result) => {
-      res
-        .status(201)
-        .json({
-          message: 'Usuário criado e e-mail de confirmação enviado',
-        });
+      res.status(201).json({
+        message: 'Usuário criado e e-mail de confirmação enviado',
+      });
     })
     .catch((error) => {
       if (!error.statusCode) {
@@ -69,6 +80,7 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const confirmationCode = req.body.confirmationCode;
   let loadedUser;
   User.findByEmail(email)
     .then(([users]) => {
@@ -86,18 +98,65 @@ exports.login = (req, res, next) => {
         error.statusCode = 401;
         throw error;
       }
-      const token = jwt.sign(
-        {
-          email: loadedUser.email,
+      return User.checkEmailConfirmatedById(loadedUser.id.toString());
+    })
+    .then(([result]) => {
+      if (result[0].emailConfirmed === 1) {
+        const token = jwt.sign(
+          {
+            email: loadedUser.email,
+            userId: loadedUser.id.toString(),
+          },
+          keys.jsonwebtoken_secret
+          //{ expiresIn: '1h' }
+        );
+        res.status(200).json({
+          token: token,
           userId: loadedUser.id.toString(),
-        },
-        keys.jsonwebtoken_secret
-        //{ expiresIn: '1h' }
-      );
-      res.status(200).json({
-        token: token,
-        userId: loadedUser.id.toString(),
-      });
+          emailConfirmed: true,
+        });
+      } else {
+        return User.findEmailConfirmationCodeById(loadedUser.id.toString());
+      }
+    })
+    .then(([result]) => {
+      if (!confirmationCode) {
+        res.status(200).json({
+          emailConfirmed: false,
+          message: error_messages.email_confirmation_code_missing,
+        });
+      } else {
+        if (confirmationCode === result[0].emailConfirmationCode) {
+          const token = jwt.sign(
+            {
+              email: loadedUser.email,
+              userId: loadedUser.id.toString(),
+            },
+            keys.jsonwebtoken_secret
+            //{ expiresIn: '1h' }
+          );
+          User.confirmEmailById(loadedUser.id.toString())
+            .then(() => {
+              res.status(200).json({
+                token: token,
+                userId: loadedUser.id.toString(),
+                emailConfirmed: true,
+              });
+            })
+            .catch((error) => {
+              if (!error.statusCode) {
+                error.statusCode = 500;
+              }
+              next(error);
+            });
+        } else {
+          res.status(401).json({
+            emailConfirmed: false,
+            message: error_messages.email_confirmation_code_wrong,
+          });
+        }
+      }
+      return;
     })
     .catch((error) => {
       if (!error.statusCode) {
