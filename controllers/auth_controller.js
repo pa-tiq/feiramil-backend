@@ -116,48 +116,50 @@ exports.login = (req, res, next) => {
           emailConfirmed: true,
         });
       } else {
-        return User.findEmailConfirmationCodeById(loadedUser.id.toString());
-      }
-    })
-    .then(([result]) => {
-      if (!confirmationCode) {
-        res.status(200).json({
-          emailConfirmed: false,
-          message: error_messages.email_confirmation_code_missing,
-        });
-      } else {
-        if (confirmationCode === result[0].emailConfirmationCode) {
-          const token = jwt.sign(
-            {
-              email: loadedUser.email,
-              userId: loadedUser.id.toString(),
-            },
-            keys.jsonwebtoken_secret
-            //{ expiresIn: '1h' }
-          );
-          User.confirmEmailById(loadedUser.id.toString())
-            .then(() => {
+        User.findEmailConfirmationCodeById(loadedUser.id.toString()).then(
+          ([result]) => {
+            if (!confirmationCode) {
               res.status(200).json({
-                token: token,
-                userId: loadedUser.id.toString(),
-                emailConfirmed: true,
+                emailConfirmed: false,
+                message: error_messages.email_confirmation_code_missing,
               });
-            })
-            .catch((error) => {
-              if (!error.statusCode) {
-                error.statusCode = 500;
+            } else {
+              if (confirmationCode === result[0].emailConfirmationCode) {
+                const token = jwt.sign(
+                  {
+                    email: loadedUser.email,
+                    userId: loadedUser.id.toString(),
+                  },
+                  keys.jsonwebtoken_secret
+                  //{ expiresIn: '1h' }
+                );
+                User.confirmEmailById(loadedUser.id.toString())
+                  .then(() => {
+                    res.status(200).json({
+                      token: token,
+                      userId: loadedUser.id.toString(),
+                      emailConfirmed: true,
+                    });
+                  })
+                  .catch((error) => {
+                    if (!error.statusCode) {
+                      error.statusCode = 500;
+                    }
+                    next(error);
+                  });
+              } else {
+                res.status(401).json({
+                  emailConfirmed: false,
+                  message: error_messages.email_confirmation_code_wrong,
+                });
               }
-              next(error);
-            });
-        } else {
-          res.status(401).json({
-            emailConfirmed: false,
-            message: error_messages.email_confirmation_code_wrong,
-          });
-        }
+            }
+            return;
+          }
+        );
       }
-      return;
     })
+
     .catch((error) => {
       if (!error.statusCode) {
         error.statusCode = 500;

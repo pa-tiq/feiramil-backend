@@ -3,6 +3,7 @@ const path = require('path');
 const { validationResult } = require('express-validator');
 const error_messages = require('../constants/error_messages.json');
 const success_messages = require('../constants/success_messages.json');
+const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 const CityFilter = require('../models/cityFilter');
