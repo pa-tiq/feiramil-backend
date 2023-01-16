@@ -47,63 +47,31 @@ exports.updateUser = (req, res, next) => {
   const phone = req.body.phone;
   const city = req.body.city;
   const state = req.body.state;
-  const newPassword = req.body.password;
-  if (!newPassword) {
-    const user = new User(
-      userId,
-      email,
-      null,
-      name,
-      om,
-      phone,
-      null,
-      city,
-      state
-    );
-    user
-      .update()
-      .then((result) => {
-        res.status(201).json({
-          message: 'Usuário editado',
-          changedRows: result[0].changedRows,
-        });
-      })
-      .catch((error) => {
-        if (!error.statusCode) {
-          error.statusCode = 500;
-        }
-        next(error);
+  const user = new User(
+    userId,
+    email,
+    null,
+    name,
+    om,
+    phone,
+    null,
+    city,
+    state
+  );
+  user
+    .update()
+    .then((result) => {
+      res.status(201).json({
+        message: 'Usuário editado',
+        changedRows: result[0].changedRows,
       });
-  } else {
-    bcrypt
-      .hash(newPassword, 12)
-      .then((hashedPassword) => {
-        const user = new User(
-          userId,
-          email,
-          hashedPassword,
-          name,
-          om,
-          phone,
-          null,
-          city,
-          state
-        );
-        return user.update();
-      })
-      .then((result) => {
-        res.status(201).json({
-          message: success_messages.user_edited,
-          changedRows: result[0].changedRows,
-        });
-      })
-      .catch((error) => {
-        if (!error.statusCode) {
-          error.statusCode = 500;
-        }
-        next(error);
-      });
-  }
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      next(error);
+    });
 };
 
 exports.updatePhotoPath = (req, res, next) => {
@@ -212,7 +180,7 @@ exports.updateFilter = (req, res) => {
 exports.updateFiltering = (req, res) => {
   const userId = req.userId;
   const filtering = req.body.filtering;
-  User.updateFilterByUserId(filtering,userId)
+  User.updateFilterByUserId(filtering, userId)
     .then((result) => {
       res.status(200).json({
         message: success_messages.user_edited,
@@ -232,10 +200,9 @@ exports.deleteFilter = (req, res, next) => {
   CityFilter.findById(id)
     .then(([filters]) => {
       if (filters.length > 0) {
-        if(filters[filters.length - 1].userId == userId){
+        if (filters[filters.length - 1].userId == userId) {
           return CityFilter.deleteById(id);
-        }
-        else{
+        } else {
           const error = new Error(error_messages.not_authorized);
           error.statusCode = 403;
           throw error;

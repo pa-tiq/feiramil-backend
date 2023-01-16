@@ -20,7 +20,7 @@ router.put(
           }
         });
       })
-      .normalizeEmail(),
+      .normalizeEmail({ gmail_remove_dots: false }),
     body('password').trim().isLength({ min: 5 }),
   ],
   authController.signup
@@ -30,7 +30,7 @@ router.post('/login', authController.login);
 
 router.get('/om', isAuth, authController.getUserOM);
 
-router.get('/tokenlogin', isAuth, authController.tokenLogin)
+router.get('/tokenlogin', isAuth, authController.tokenLogin);
 
 router.patch(
   '/om',

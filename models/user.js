@@ -79,11 +79,11 @@ module.exports = class User {
   }
 
   static fetchAll() {
-    return db.execute('SELECT * FROM users');
+    return db.execute('SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter FROM users');
   }
 
   static findById(id) {
-    return db.execute('SELECT * FROM users WHERE users.id = ?', [id]);
+    return db.execute('SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter  FROM users WHERE users.id = ?', [id]);
   }
 
   static findByEmail(email) {

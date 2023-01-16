@@ -20,8 +20,16 @@ exports.signup = (req, res, next) => {
   const confirmation_code = `${Math.random()}`.substring(2, 7);
   let emailSent = false;
   let hashedPassword = '';
-  bcrypt
-    .hash(password, 12)
+  User.findByEmail(email)
+    .then(([users]) => {
+      if (users.length !== 0) {
+        const error = new Error(error_messages.email_already_used);
+        error.statusCode = 403;
+        throw error;
+      } else{
+        return bcrypt.hash(password, 12);
+      } 
+    })
     .then((hash) => {
       hashedPassword = hash;
       const mailOptions = {
