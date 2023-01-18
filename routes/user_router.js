@@ -61,5 +61,11 @@ router.delete(
   userController.deleteFilter
 );
 
+//router.patch(
+//  '/changepassword/:userId',
+//  isAuth,
+//  userController.changePassword
+//);
+
 
 module.exports = router;

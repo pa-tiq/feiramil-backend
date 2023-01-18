@@ -28,15 +28,44 @@ router.put(
 
 router.post('/login', authController.login);
 
-router.get('/om', isAuth, authController.getUserOM);
-
 router.get('/tokenlogin', isAuth, authController.tokenLogin);
 
+router.post(
+  '/changepasswordconfirm',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Por favor, use um e-mail válido.')
+      .custom((value, { req }) => {
+        return User.findByEmail(value).then(([rows]) => {
+          if (rows.length === 0) {
+            return Promise.reject('Esse e-mail não está cadastrado.');
+          }
+        });
+      })
+      .normalizeEmail({ gmail_remove_dots: false }),
+  ],
+  authController.changePasswordConfirm
+);
+
 router.patch(
-  '/om',
-  isAuth,
-  [body('om').trim().not().isEmpty()],
-  authController.updateUserOM
+  '/changepassword',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Por favor, use um e-mail válido.')
+      .custom((value, { req }) => {
+        return User.findByEmail(value).then(([rows]) => {
+          if (rows.length === 0) {
+            return Promise.reject('Esse e-mail não está cadastrado.');
+          }
+        });
+      })
+      .normalizeEmail({ gmail_remove_dots: false }),
+    body('password').trim().isLength({ min: 5 }),
+    body('confirmationCode').trim().isLength({ min: 5, max: 5}),
+  ],
+  authController.changePassword
 );
 
 module.exports = router;

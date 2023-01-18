@@ -26,14 +26,28 @@ module.exports = class User {
     this.state = state ? state : null;
     this.filter = filter ? filter : null;
     this.emailConfirmed = emailConfirmed ? emailConfirmed : null;
-    this.emailConfirmationCode = emailConfirmationCode ? emailConfirmationCode : null;
+    this.emailConfirmationCode = emailConfirmationCode
+      ? emailConfirmationCode
+      : null;
   }
 
   save() {
     return db.execute(
       `INSERT INTO users (email, password, name, om, phone, photo, city, state, filter, emailConfirmed, emailConfirmationCode) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [this.email, this.password, this.name, this.om, this.phone, this.photo, this.city, this.state, this.filter, this.emailConfirmed, this.emailConfirmationCode]
+      [
+        this.email,
+        this.password,
+        this.name,
+        this.om,
+        this.phone,
+        this.photo,
+        this.city,
+        this.state,
+        this.filter,
+        this.emailConfirmed,
+        this.emailConfirmationCode,
+      ]
     );
   }
   update() {
@@ -79,11 +93,16 @@ module.exports = class User {
   }
 
   static fetchAll() {
-    return db.execute('SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter FROM users');
+    return db.execute(
+      'SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter FROM users'
+    );
   }
 
   static findById(id) {
-    return db.execute('SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter  FROM users WHERE users.id = ?', [id]);
+    return db.execute(
+      'SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter  FROM users WHERE users.id = ?',
+      [id]
+    );
   }
 
   static findByEmail(email) {
@@ -95,19 +114,44 @@ module.exports = class User {
   }
 
   static updateFilterByUserId(filter, userId) {
-    return db.execute('UPDATE users SET filter = ? WHERE id = ?', [filter, userId]);
+    return db.execute('UPDATE users SET filter = ? WHERE id = ?', [
+      filter,
+      userId,
+    ]);
   }
 
-  static confirmEmailById(userId){
-    return db.execute(`UPDATE users SET emailConfirmed = '1' WHERE id = ?`, [userId]);
+  static confirmEmailById(userId) {
+    return db.execute(`UPDATE users SET emailConfirmed = '1' WHERE id = ?`, [
+      userId,
+    ]);
   }  
-  
-  static findEmailConfirmationCodeById(userId){
-    return  db.execute(`SELECT users.emailConfirmationCode FROM users WHERE users.id = ?`, [userId]);
+
+  static findEmailConfirmationCodeById(userId) {
+    return db.execute(
+      `SELECT users.emailConfirmationCode FROM users WHERE users.id = ?`,
+      [userId]
+    );
+  }
+
+  static checkEmailConfirmatedById(userId) {
+    return db.execute(
+      `SELECT users.emailConfirmed FROM users WHERE users.id = ?`,
+      [userId]
+    );
+  }
+
+  static changePasswordById(userId, password) {
+    return db.execute('UPDATE users SET password = ? WHERE id = ?', [
+      password,
+      userId,
+    ]);
   }  
-  
-  static checkEmailConfirmatedById(userId){
-    return  db.execute(`SELECT users.emailConfirmed FROM users WHERE users.id = ?`, [userId]);
+
+  static changeConfirmationCodeById(userId, code){
+    return db.execute('UPDATE users SET emailConfirmationCode = ? WHERE id = ?', [
+      code,
+      userId,
+    ]);
   }
 
 };
