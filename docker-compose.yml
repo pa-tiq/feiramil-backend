@@ -15,7 +15,7 @@ services:
     networks:
       - app-network
   mysql:
-    image: mariadb:latest
+    image: mariadb:10.11.1-rc-jammy
     container_name: feiramil_mysql
     restart: unless-stopped
     env_file: .env
