@@ -1,12 +1,14 @@
-FROM node
+FROM node:19-alpine3.16
 
-WORKDIR /usr/app
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-COPY package.json /usr/app/
+WORKDIR /home/node/app
 
-RUN yarn install
+COPY package*.json ./
 
-COPY . . 
+RUN npm install
+
+COPY --chown=node:node . .
 
 EXPOSE 8080
 

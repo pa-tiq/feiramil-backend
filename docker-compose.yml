@@ -5,28 +5,34 @@ services:
       context: .
       dockerfile: Dockerfile
     image: nodejs
-    container_name: nodejs
+    container_name: feiramil_node
     restart: unless-stopped
     ports:
       - '80:8080'
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
-    links:
-      - mysql
-    mysql:
-      image: mariadb:latest
-      restart: unless-stopped
-      env_file: .env
-      environment:
-        MYSQL_ROOT_PASSWORD: $DOCKER_MYSQL_PASSWORD
-        MYSQL_USER: $DOCKER_MYSQL_USERNAME
-        MYSQL_PASSWORD: $DOCKER_MYSQL_PASSWORD
-        MYSQL_DATABASE: $DOCKER_MYSQL_DB
-      volumes:
-        - mysqldata:/var/lib/mysql
-      ports:
-        - 3306:3306
+    networks:
+      - app-network
+  mysql:
+    image: mariadb:latest
+    container_name: feiramil_mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: $DOCKER_MYSQL_PASSWORD
+      MYSQL_USER: $DOCKER_MYSQL_USERNAME
+      MYSQL_PASSWORD: $DOCKER_MYSQL_PASSWORD
+      MYSQL_DATABASE: $DOCKER_MYSQL_DB
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - app-network
+    ports:
+    - 3306:3306
+networks:
+  app-network:
+    driver: bridge
 volumes:
   mysqldata: {}
   node_modules:
