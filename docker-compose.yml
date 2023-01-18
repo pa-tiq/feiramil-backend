@@ -8,7 +8,7 @@ services:
     container_name: feiramil_node
     restart: unless-stopped
     ports:
-      - '80:8080'
+      - '8080:8080'
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
