@@ -7,6 +7,7 @@ const pool = mysql.createPool({
   user: 'root',
   database: keys.MySQL_db,
   password: keys.MySQL_password,
+  waitForConnections: true
 });
 
 //const pool = mysql.createPool({

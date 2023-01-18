@@ -1,6 +1,7 @@
 keys.json
 keys.js
 .vscode
+.env
 
 # Logs
 logs
