@@ -188,8 +188,9 @@ exports.login = (req, res, next) => {
 
 exports.tokenLogin = (req, res, next) => {
   User.findById(req.userId)
-    .then((user) => {
-      if (!user) {
+    .then(([users]) => {
+      console.log(users);
+      if (users.length === 0) {
         const error = new Error(error_messages.user_not_found);
         error.statusCode = 404;
         throw error;
