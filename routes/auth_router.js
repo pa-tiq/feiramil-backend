@@ -31,7 +31,7 @@ router.post('/login', authController.login);
 router.get('/tokenlogin', isAuth, authController.tokenLogin);
 
 router.post(
-  '/changepasswordconfirm',
+  '/changepasswordrequest',
   [
     body('email')
       .isEmail()

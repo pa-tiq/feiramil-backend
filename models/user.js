@@ -100,7 +100,7 @@ module.exports = class User {
 
   static findById(id) {
     return db.execute(
-      'SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter  FROM users WHERE users.id = ?',
+      'SELECT users.id, users.email, users.name, users.om, users.phone, users.photo, users.city, users.state, users.filter FROM users WHERE users.id = ?',
       [id]
     );
   }

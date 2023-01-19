@@ -225,7 +225,7 @@ exports.changePasswordConfirm = (req, res, next) => {
       hashedConfirmationCode = hash;
       const mailOptions = {
         from: 'patrick@ime.eb.br',
-        to: email,
+        to: req.body.email,
         subject: 'Feiramil - Recuperação de senha',
         html: password_reset_screen(confirmation_code),
       };

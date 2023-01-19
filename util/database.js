@@ -34,7 +34,7 @@ async function createTables(){
       \`state\` varchar(45) DEFAULT NULL,
       \`filter\` tinyint DEFAULT 0,
       \`emailConfirmed\` tinyint DEFAULT 0,
-      \`emailConfirmationCode\` varchar(45) DEFAULT NULL,
+      \`emailConfirmationCode\` varchar(255) DEFAULT NULL,
       \`created_at\` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (\`id\`),
       UNIQUE KEY \`id_UNIQUE\` (\`id\`),
