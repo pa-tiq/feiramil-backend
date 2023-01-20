@@ -22,7 +22,6 @@ exports.signup = (req, res, next) => {
   const confirmation_code = `${Math.random()}`.substring(2, 7);
   let emailSent = false;
   let hashedPassword = '';
-  let hashedConfirmationCode = '';
   User.findByEmail(email)
     .then(([users]) => {
       if (users.length !== 0) {
@@ -35,10 +34,6 @@ exports.signup = (req, res, next) => {
     })
     .then((hash) => {
       hashedPassword = hash;
-      return bcrypt.hash(confirmation_code, 12);
-    })
-    .then((hash) => {
-      hashedConfirmationCode = hash;
       const mailOptions = {
         from: 'patrick@ime.eb.br',
         to: email,
@@ -70,7 +65,7 @@ exports.signup = (req, res, next) => {
           null,
           null,
           '0',
-          hashedConfirmationCode
+          confirmation_code
         );
         return user.save();
       } else {
@@ -139,39 +134,35 @@ exports.login = (req, res, next) => {
                 message: error_messages.email_confirmation_code_missing,
               });
             } else {
-              bcrypt
-                .compare(confirmationCode, result[0].emailConfirmationCode)
-                .then((isEqual) => {
-                  if (isEqual) {
-                    const token = jwt.sign(
-                      {
-                        email: loadedUser.email,
-                        userId: loadedUser.id.toString(),
-                      },
-                      keys.jsonwebtoken_secret
-                      //{ expiresIn: '1h' }
-                    );
-                    User.confirmEmailById(loadedUser.id.toString())
-                      .then(() => {
-                        res.status(200).json({
-                          token: token,
-                          userId: loadedUser.id.toString(),
-                          emailConfirmed: true,
-                        });
-                      })
-                      .catch((error) => {
-                        if (!error.statusCode) {
-                          error.statusCode = 500;
-                        }
-                        next(error);
-                      });
-                  } else {
-                    res.status(401).json({
-                      emailConfirmed: false,
-                      message: error_messages.email_confirmation_code_wrong,
+              if (confirmationCode === result[0].emailConfirmationCode) {
+                const token = jwt.sign(
+                  {
+                    email: loadedUser.email,
+                    userId: loadedUser.id.toString(),
+                  },
+                  keys.jsonwebtoken_secret
+                  //{ expiresIn: '1h' }
+                );
+                User.confirmEmailById(loadedUser.id.toString())
+                  .then(() => {
+                    res.status(200).json({
+                      token: token,
+                      userId: loadedUser.id.toString(),
+                      emailConfirmed: true,
                     });
-                  }
+                  })
+                  .catch((error) => {
+                    if (!error.statusCode) {
+                      error.statusCode = 500;
+                    }
+                    next(error);
+                  });
+              } else {
+                res.status(401).json({
+                  emailConfirmed: false,
+                  message: error_messages.email_confirmation_code_wrong,
                 });
+              }
             }
             return;
           }
@@ -219,18 +210,14 @@ exports.changePasswordConfirm = (req, res, next) => {
         throw error;
       } else {
         userId = users[0].id;
-        return bcrypt.hash(confirmation_code, 12);
+        const mailOptions = {
+          from: 'patrick@ime.eb.br',
+          to: req.body.email,
+          subject: 'Feiramil - Recuperação de senha',
+          html: password_reset_screen(confirmation_code),
+        };
+        return mailer.sendMail(mailOptions);
       }
-    })
-    .then((hash) => {
-      hashedConfirmationCode = hash;
-      const mailOptions = {
-        from: 'patrick@ime.eb.br',
-        to: req.body.email,
-        subject: 'Feiramil - Recuperação de senha',
-        html: password_reset_screen(confirmation_code),
-      };
-      return mailer.sendMail(mailOptions);
     })
     .then((info) => {
       emailSent = false;
@@ -243,7 +230,7 @@ exports.changePasswordConfirm = (req, res, next) => {
         emailSent = true;
       }
       if (emailSent) {
-        return User.changeConfirmationCodeById(userId, hashedConfirmationCode);
+        return User.changeConfirmationCodeById(userId, confirmation_code);
       }
     })
     .then((result) => {
@@ -270,27 +257,23 @@ exports.changePassword = (req, res, next) => {
         throw error;
       } else {
         userId = users[0].id;
-        return bcrypt.compare(confirmationCode, users[0].emailConfirmationCode);
-      }
-    })
-    .then((isEqual) => {
-      if (isEqual) {
-        bcrypt
-          .hash(password, 12)
-          .then((hash) => {
-            return User.changePasswordById(userId, hash);
-          })
-          .then(() => {
-            res.status(200).json({ message: success_messages.user_edited });
+        if (confirmationCode === users[0].emailConfirmationCode) {
+          bcrypt
+            .hash(password, 12)
+            .then((hash) => {
+              return User.changePasswordById(userId, hash);
+            })
+            .then(() => {
+              res.status(200).json({ message: success_messages.user_edited });
+            });
+        } else {
+          res.status(401).json({
+            emailConfirmed: false,
+            message: error_messages.email_confirmation_code_wrong,
           });
-      } else {
-        res.status(401).json({
-          emailConfirmed: false,
-          message: error_messages.email_confirmation_code_wrong,
-        });
+        }
       }
     })
-
     .catch((error) => {
       if (!error.statusCode) {
         error.statusCode = 500;
