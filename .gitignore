@@ -1,5 +1,7 @@
 keys.json
 keys.js
+server.key
+server.cert
 .vscode
 .env
 

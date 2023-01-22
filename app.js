@@ -1,32 +1,33 @@
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
+const helmet = require('helmet');
+const morgan = require('morgan');
+
+const app = express();
 
 const feedRoutes = require('./routes/feed_router');
 const authRoutes = require('./routes/auth_router');
 const userRoutes = require('./routes/user_router');
 
-const app = express();
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'requests.log'),
+  { flags: 'a' } // a = append (new data will be appended to the log file)
+);
+
+app.use(helmet());
+app.use(morgan('combined', { stream: accessLogStream }));
+
+const privateKey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');
 
 const profilePictures = multer({ dest: 'profilePictures/' });
 const productPictures = multer({ dest: 'productPictures/' });
-
-// This method will save the binary content of the request as a file.
-//app.patch('/binary-upload', (req, res) => {
-//  req.pipe(fs.createWriteStream('./uploads/image' + Date.now() + '.png'));
-//  res.end('OK');
-//});
-
-//// This method will save a "photo" field from the request as a file.
-//app.patch('/multipart-upload', upload.single('photo'), (req, res) => {
-//  // You can access other HTTP parameters. They are located in the body object.
-//  console.log(req.body);
-//  res.end('OK');
-//});
-
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -59,8 +60,14 @@ app.use(
   //extract a single file in a field named 'image' in the request
 ); //every incoming request will be parsed for files
 
-app.use('/profilePictures', express.static(path.join(__dirname, 'profilePictures')));
-app.use('/productPictures', express.static(path.join(__dirname, 'productPictures')));
+app.use(
+  '/profilePictures',
+  express.static(path.join(__dirname, 'profilePictures'))
+);
+app.use(
+  '/productPictures',
+  express.static(path.join(__dirname, 'productPictures'))
+);
 
 app.use((req, res, next) => {
   //middleware to solve CORS error
@@ -69,7 +76,10 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Methods',
     'GET, POST, PUT, PATCH, DELETE'
   ); //allow origins to use my HTTP methods
-  res.setHeader('Access-Control-Allow-Headers', 'Content-type, Accept, Authorization'); //allow origins to use these two headers
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-type, Accept, Authorization'
+  ); //allow origins to use these two headers
   next(); //the request can now continue
 });
 
@@ -84,8 +94,10 @@ app.use((error, req, res, next) => {
   const message = error.message;
   const data = error.data;
   //if (!message.includes('invalid signature')){
-    res.status(status).json({ message: message, data: data });
+  res.status(status).json({ message: message, data: data });
   //}
 });
 
-app.listen(process.env.PORT || 8080);
+https
+  .createServer({ key: privateKey, cert: certificate }, app)
+  .listen(process.env.PORT || 8080);
