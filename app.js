@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+//const https = require('https');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -23,8 +23,8 @@ const accessLogStream = fs.createWriteStream(
 app.use(helmet());
 app.use(morgan('combined', { stream: accessLogStream }));
 
-const privateKey = fs.readFileSync('server.key');
-const certificate = fs.readFileSync('server.cert');
+//const privateKey = fs.readFileSync('server.key');
+//const certificate = fs.readFileSync('server.cert');
 
 const profilePictures = multer({ dest: 'profilePictures/' });
 const productPictures = multer({ dest: 'productPictures/' });
@@ -98,6 +98,8 @@ app.use((error, req, res, next) => {
   //}
 });
 
-https
-  .createServer({ key: privateKey, cert: certificate }, app)
-  .listen(process.env.PORT || 8080);
+//https
+//  .createServer({ key: privateKey, cert: certificate }, app)
+//  .listen(process.env.PORT || 8080);
+
+app.listen(process.env.PORT || 8080);

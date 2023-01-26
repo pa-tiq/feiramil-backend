@@ -4,6 +4,7 @@ server.key
 server.cert
 .vscode
 .env
+*.png
 
 # Logs
 logs
