@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nodejs
+    image: nodejs:19-alpine3.16
     container_name: feiramil_node
     restart: unless-stopped
     ports:
